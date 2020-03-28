@@ -11,7 +11,7 @@ const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWIL
 function check(arr,nn) {
     let i=0;
     while(i<arr.length){
-        if(arr[i].loc==nn){
+        if(arr[i].state==nn){
             return {found:true,id:i}
         }
         i+=1;
@@ -39,12 +39,12 @@ function stateCasesCounter(data){
 exports.getStateData  =async (state)=>{
     try{
         let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
-        let liveOfficialData=await fetch("https://api.rootnet.in/covid19-in/stats/latest").then(result=>{return result.json()})
+        let liveOfficialData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org/statewise").then(result=>{return result.json()})
         if((!(liveData.success))||(!(liveOfficialData.success)))
         throw "Api not responding"
         liveData=liveData.data;
         liveOfficialData=liveOfficialData.data;
-        let totalCases=liveData.summary.total;
+        let totalCases=liveOfficialData.total.confirmed;
         let patients=liveData.rawPatientData;
         let stateData={
             total:0,
@@ -52,11 +52,11 @@ exports.getStateData  =async (state)=>{
             rocovered:0,
             deaths:0
         };
-        let chk=check(liveOfficialData.regional,state)
+        let chk=check(liveOfficialData.statewise,state)
         if(chk.found)
         {
-            stateData.rocovered=liveOfficialData.regional[chk.id]['discharged'];
-            stateData.deaths=liveOfficialData.regional[chk.id]['deaths'];
+            stateData.rocovered=liveOfficialData.statewise[chk.id]['recovered'];
+            stateData.deaths=liveOfficialData.statewise[chk.id]['deaths'];
         }
         patients=await getDataByState(patients,state)
         if(patients.length>0)
@@ -75,7 +75,7 @@ exports.getStateData  =async (state)=>{
             stateData:stateData
         }}
     }catch(e){
-        //console.log(e);
+        console.log(e);
         return {err:true,msg:e}
     }
 }
@@ -199,7 +199,7 @@ exports.getUpdates=async()=>{
         throw "Api not responding"
         liveData=liveData.data;
         let states=stateCasesCounter(liveData.rawPatientData);
-        let stateNames=Object.keys(states),i=0;
+        let stateNames=Object.keys(states),i=0;let live;
         while(i<stateNames.length){
             let name=stateNames[i];
             if(name=='')
@@ -208,7 +208,7 @@ exports.getUpdates=async()=>{
             if(!(state))
             state=await State.addNew(name)
             if(state.lastRecorded!=states[name]){
-                let live= await this.getStateData(name);
+                live= await this.getStateData(name);
                 if(message.length<=0)
                 message+=Message.starting()
                 message+=(Message.stateToMessageFormList(states[name]-state.lastRecorded)+Message.stateToMessage(name,live))
@@ -220,7 +220,7 @@ exports.getUpdates=async()=>{
         if(message.length>0)
         {
             console.log("from here")
-            message+=Message.ending(liveData.summary.total)
+            message+=Message.ending(live.data.total)
             try{
                 ChatApi.sendToAll(message);
                 return true
