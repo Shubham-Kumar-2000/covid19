@@ -213,7 +213,7 @@ exports.getUpdates=async()=>{
                 if(message.length<=0)
                 message+=Message.starting()
                 message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded)+Message.stateToMessage(name,live))
-                state=await State.updateState(name,states[name])
+                state=await State.updateState(name,live.data.stateData.total)
             }
             i+=1;
         };
