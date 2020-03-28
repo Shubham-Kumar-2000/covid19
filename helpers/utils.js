@@ -208,7 +208,7 @@ exports.getUpdates=async()=>{
             if(!(state))
             state=await State.addNew(name)
             live= await this.getStateData(name);
-            if((state.lastRecorded!=states[name])||(state.lastRecorded!=live.data.stateData.total)){
+            if((state.lastRecorded!=live.data.stateData.total)){
                 
                 if(message.length<=0)
                 message+=Message.starting()
