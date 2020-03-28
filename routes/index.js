@@ -69,10 +69,7 @@ router.post('/messages',async (req, res) => {
           command.splice(0,1);
           replyMsg = command.join(":");
           let sentMessages=ChatApi.sendToAll(replyMsg);
-          await ChatApi.sendmsg({
-            phone:user.number,
-            body:"Message Sent To All"
-          })
+          
           i+=1;continue;
         }
       }
