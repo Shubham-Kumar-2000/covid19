@@ -38,6 +38,20 @@ router.post('/createmenu', (req, res) => {
     }
   ]
 }*/
+router.get('/date',async (req, res) => {
+  let changeTimezone = (date, ianatz) => {
+    var invdate = new Date(date.toLocaleString('en-US', {
+      timeZone: ianatz
+    }));
+    return new Date(date.getTime() + date.getTime() - invdate.getTime());
+}
+  
+const d = changeTimezone(new Date(), "Asia/Kolkata");
+const dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
+const [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d)
+res.status(200).json(mo)
+}
+)
 router.get('/sendMessages',async (req, res) => {
   res.status(200).json({s:'s'})
   util.getUpdates()

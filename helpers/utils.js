@@ -209,7 +209,9 @@ exports.getUpdates=async()=>{
             state=await State.addNew(name)
             if(state.lastRecorded!=states[name]){
                 let live= await this.getStateData(name);
-                message+=Message.stateToMessage(name,live)
+                if(message.length<=0)
+                message+=Message.starting()
+                message+=(Message.stateToMessageFormList(states[name]-state.lastRecorded)+Message.stateToMessage(name,live))
                 state=await State.updateState(name,states[name])
             }
             i+=1;

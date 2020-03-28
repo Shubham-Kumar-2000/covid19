@@ -8,7 +8,7 @@ let changeTimezone = (date, ianatz) => {
 const d = changeTimezone(new Date(), "Asia/Kolkata");
 const dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
 const [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
-  
+
 
 exports.stateToMessage=(name,data,isNew=false,diff=0)=>{
     data=data.data
@@ -23,4 +23,13 @@ exports.stateToMessage=(name,data,isNew=false,diff=0)=>{
 }
 exports.ending=(num)=>{
     return "Till now there has been *"+num+"* confirmed cases in India. Please stay in your homes isolated and use sanitizers and disinfectant sprays frequently. Wear a mask. Stay safe and positive."
+}
+exports.stateToMessageFormList=(diff)=>{
+    if(diff>0)
+    return "New *"+diff+" Positive* Case(s) detected\n\n"
+    else
+    return "New *"+(0-diff)+" Negative* Case(s) detected\n\n"
+}
+exports.starting=()=>{
+    return "*New Update* :"+hh+':'+mm+"  "+da+'-'+mo+'-'+ye+'\n\n\n';
 }
