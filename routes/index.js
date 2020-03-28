@@ -143,7 +143,7 @@ router.post('/messages',async (req, res) => {
           //console.log("state menu",recvMsg)
           let menu= await Menu.findOne({name:"stateMenu"})
           let choice = parseInt(recvMsg);
-          if(choice >= 1 && choice <= 33){
+          if(choice >= 1 && choice <= 34){
             let stateData=await util.getStateData(menu.options[choice-1].description)
             if(stateData.data.stateData.total==0)
             await ChatApi.sendmsg({
