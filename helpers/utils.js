@@ -67,7 +67,7 @@ exports.getStateData  =async (state)=>{
                 return b.date-a.date
             })
             stateData.lastreported=patients[patients.length-1];
-            stateData.total=patients.length;
+            stateData.total=liveOfficialData.statewise[chk.id]['confirmed'];
 
         }
         return {err:false,data:{
