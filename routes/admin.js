@@ -17,15 +17,15 @@ router.post('/addMenu', function(req, res, next) {
         }
         try {
             let menu = new Menu(req.body.menu);
-            ////console.log("menu ",menu)
+            //console.log("menu ",menu)
             menu.save().then(m=>{
-                ////console.log("save")
+                //console.log("save")
                 return res.status(200).json({
                     'status':1,
                     'msg':'Created'
                 });
             }).catch(e=>{
-                ////console.log("err ",e)
+                //console.log("err ",e)
                 return res.status(500).json({
                     'err':e
                 });

@@ -21,20 +21,20 @@ if(process.env.CLUSTER === 'yes') {
 	const numCPUs = require('os').cpus().length;
 
 	if (cluster.isMaster) {
-		// // ////console.log('Starting app in cluster mode with '+numCPUs+ ' workers');
-    // // ////console.log(`Master ${process.pid} is running`);
+		// // //console.log('Starting app in cluster mode with '+numCPUs+ ' workers');
+    // // //console.log(`Master ${process.pid} is running`);
     let updates=schedule.scheduleJob('*/'+process.env.UPDATE_INTERVAL+' * * * *',async function(){
-      ////console.log("Checking for Update... Time now: ",new Date().toString())
+      //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
          let message = await Utills.getUpdates() ? "Updated Successfully !!!" : "Already Up-To Date...";
-       ////console.log(message+" Time now: ",new Date().toString());
+       //console.log(message+" Time now: ",new Date().toString());
        }
        catch(e){
-       ////console.log(e)
+       //console.log(e)
        }
       /*Utills.getUpdates().then(data => {
-        ////console.log("d",data);
-      }).catch(err=>{////console.log("e",err)});*/
+        //console.log("d",data);
+      }).catch(err=>{//console.log("e",err)});*/
     })
 		// Fork workers.
 		for (let i = 0; i < numCPUs; i++) {
@@ -42,17 +42,17 @@ if(process.env.CLUSTER === 'yes') {
 		}
 
 		cluster.on('exit', (worker, code, signal) => {
-			// // ////console.log(`worker ${worker.process.pid} died`);
+			// // //console.log(`worker ${worker.process.pid} died`);
 	  });
 
 		return;
 	}
   // else it's a worker. continue.
-	// // ////console.log(`Worker ${process.pid} started`);
+	// // //console.log(`Worker ${process.pid} started`);
 
 }
 else {
-  // ////console.log('Starting app in non-cluster mode. (To start in cluster mode, pass CLUSTER=yes in config file)');
+  // //console.log('Starting app in non-cluster mode. (To start in cluster mode, pass CLUSTER=yes in config file)');
 }
 
 

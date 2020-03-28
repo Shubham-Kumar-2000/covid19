@@ -51,7 +51,7 @@ exports.getStateByName = (name) => {
 exports.updateState = (name, num) => {
     return new Promise((resolve, reject) => {
         State.findOneAndUpdate({"name": name}, { $set: { lastRecorded: num } }, {new: true} ,(err, stateNew) => {
-            ////console.log("here",err);
+            //console.log("here",err);
             if(err)
             resolve ({
                     status: false,
