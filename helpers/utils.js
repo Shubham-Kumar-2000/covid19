@@ -75,7 +75,7 @@ exports.getStateData  =async (state)=>{
             stateData:stateData
         }}
     }catch(e){
-        //console.log(e);
+        ////console.log(e);
         return {err:true,msg:e}
     }
 }
@@ -192,7 +192,7 @@ let updateAllStates = (stateNames,states)=>{
 
 exports.getUpdates=async()=>{
     try{
-        //console.log('Hello');
+        ////console.log('Hello');
         let message='';
         let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
         if((!(liveData.success)))
@@ -214,23 +214,23 @@ exports.getUpdates=async()=>{
             }
             i+=1;
         };
-        console.log("from 1")
+        //console.log("from 1")
         if(message.length>0)
         {
-            console.log("from here")
+            //console.log("from here")
             message+=Message.ending(liveData.summary.total)
             try{
                 ChatApi.sendToAll(message);
                 return true
             }
             catch(e){
-                console.log(e)
+                //console.log(e)
                 return false
             }
         }
     }
     catch(e){
-        console.log(e)
+        //console.log(e)
     }
     
 }
@@ -240,17 +240,17 @@ exports.sendMessageToAll = (messageToSend)=>{
 
     let mainPromise = new Promise((resolve1,reject1)=>{
         User.find({},(err,users)=>{
-            //console.log("Users ",users);
+            ////console.log("Users ",users);
             if(err) reject1(err);
             let promises = [];
             users.forEach(user=>{
                 let interval;
                 let number = user.number;
-                //console.log("Number ",number);
+                ////console.log("Number ",number);
                 let def = new Promise((resolve,reject)=>{
                     let to = 'whatsapp:+'+number;
                     let skip = Math.floor(Math.random()*10)
-                    //console.log(skip,to);
+                    ////console.log(skip,to);
                     interval = setInterval(() => {
                         skip--;
                         if(skip == 0)
@@ -260,11 +260,11 @@ exports.sendMessageToAll = (messageToSend)=>{
                             body: messageToSend,
                             to: to
                             }).then(message => {
-                                //console.log("Number ",to);
+                                ////console.log("Number ",to);
                                 clearInterval(interval);
                                 resolve(message);
                             }).catch(err => {
-                                //console.log("Number ",to,err);
+                                ////console.log("Number ",to,err);
                                 clearInterval(interval);
                                 reject(err);
                             });
@@ -306,12 +306,12 @@ exports.sendMsg = (num,message)=>{
 exports.sendMessageToAll2 = (messageToSend)=>{
     let mainPromise = new Promise((resolve1,reject1)=>{
         User.find({},(err,users)=>{
-            console.log("Users ",users);
+            //console.log("Users ",users);
             if(err) reject1(err);
             let promises = [];
             users.forEach(user=>{
                 let number = user.number;
-                console.log("Number ",number);
+                //console.log("Number ",number);
                 promises.push(this.sendMsg(number,messageToSend)); 
             });
             Promise.all(promises).then(u=>{

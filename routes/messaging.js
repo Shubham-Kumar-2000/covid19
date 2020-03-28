@@ -29,20 +29,20 @@ router.post('/reply', (req, res) => {
   let recvMsg = req.body.Body;
   getOrSetUser(fromNum).then(user=>{
     let replyMsg = "";
-    //// //console.log("User ",user);
+    //// ////console.log("User ",user);
     let command = recvMsg.split(':');
       if(user.isAdmin && command[0].toLocaleLowerCase() == 'command' && command.length>1){
           command.splice(0,1);
           replyMsg = command.join(":");
-          //// //console.log("Reply msg",command)
+          //// ////console.log("Reply msg",command)
           util.sendMessageToAll(replyMsg).then(u=>{
-            //console.log("Success",u);
+            ////console.log("Success",u);
               return res.status(200).json({
                 status: true,
                 message: 'Success'
               });
           }).catch(e=>{
-            //console.log("Errorrrr",e);
+            ////console.log("Errorrrr",e);
             return res.status(500).json({
               status: false,
               message: 'Error',
@@ -72,7 +72,7 @@ router.post('/reply', (req, res) => {
                       message: 'Success'
                     }) 
                   }).catch(e=>{
-                    // //console.log("Menu Not Set",e);
+                    // ////console.log("Menu Not Set",e);
                     return res.status(500).json({
                       status: false,
                       message: 'Menu Not Set',
@@ -80,7 +80,7 @@ router.post('/reply', (req, res) => {
                     })
                   });
                 }).catch(e=>{
-                    // //console.log("Message Not Sent",e);
+                    // ////console.log("Message Not Sent",e);
                     return res.status(500).json({
                       status: false,
                       message: 'Message Not Sent',
@@ -88,7 +88,7 @@ router.post('/reply', (req, res) => {
                     })
                   });
               }).catch(e=>{
-                // //console.log("Menu Not Found",e);
+                // ////console.log("Menu Not Found",e);
                 return res.status(500).json({
                   status: false,
                   message: 'Menu Not Found',
@@ -115,7 +115,7 @@ router.post('/reply', (req, res) => {
                       message: 'Success'
                     }) 
                   }).catch(e=>{
-                    // //console.log("Menu Not Set",e);
+                    // ////console.log("Menu Not Set",e);
                     return res.status(500).json({
                       status: false,
                       message: 'Menu Not Set',
@@ -123,7 +123,7 @@ router.post('/reply', (req, res) => {
                     })
                   });
                 }).catch(e=>{
-                    // //console.log("Message Not Sent",e);
+                    // ////console.log("Message Not Sent",e);
                     return res.status(500).json({
                       status: false,
                       message: 'Message Not Sent',
@@ -131,7 +131,7 @@ router.post('/reply', (req, res) => {
                     })
                   });
               }).catch(e=>{
-                // //console.log("Menu Not Found",e);
+                // ////console.log("Menu Not Found",e);
                 return res.status(500).json({
                   status: false,
                   message: 'Menu Not Found',
@@ -149,7 +149,7 @@ router.post('/reply', (req, res) => {
                           message: 'Success'
                         }) 
                       }).catch(e=>{
-                        // //console.log("Menu Not Set",e);
+                        // ////console.log("Menu Not Set",e);
                         return res.status(500).json({
                           status: false,
                           message: 'Menu Not Set',
@@ -157,7 +157,7 @@ router.post('/reply', (req, res) => {
                         })
                       });
                     }).catch(e=>{
-                        // //console.log("Message Not Sent",e);
+                        // ////console.log("Message Not Sent",e);
                         return res.status(500).json({
                           status: false,
                           message: 'Message Not Sent',
@@ -165,7 +165,7 @@ router.post('/reply', (req, res) => {
                         })
                       });
                   }).catch(e=>{
-                    // //console.log("Menu Not Found",e);
+                    // ////console.log("Menu Not Found",e);
                     return res.status(500).json({
                       status: false,
                       message: 'Menu Not Found',
@@ -187,7 +187,7 @@ router.post('/reply', (req, res) => {
                       message: 'Success'
                     })
                 }).catch(e=>{
-                    // //console.log("Message Not Sent",e);
+                    // ////console.log("Message Not Sent",e);
                     return res.status(500).json({
                       status: false,
                       message: 'Message Not Sent',
@@ -195,7 +195,7 @@ router.post('/reply', (req, res) => {
                     })
                   });
               }).catch(e=>{
-                // //console.log("Menu Not Found",e);
+                // ////console.log("Menu Not Found",e);
                 return res.status(500).json({
                   status: false,
                   message: 'Menu Not Found',
@@ -217,7 +217,7 @@ router.post('/reply', (req, res) => {
                         message: 'Success'
                       }) 
                     }).catch(e=>{
-                      // //console.log("Menu Not Set",e);
+                      // ////console.log("Menu Not Set",e);
                       return res.status(500).json({
                         status: false,
                         message: 'Menu Not Set',
@@ -225,7 +225,7 @@ router.post('/reply', (req, res) => {
                       })
                     });
                   }).catch(e=>{
-                      // //console.log("Message Not Sent",e);
+                      // ////console.log("Message Not Sent",e);
                       return res.status(500).json({
                         status: false,
                         message: 'Message Not Sent',
@@ -233,7 +233,7 @@ router.post('/reply', (req, res) => {
                       })
                     });
                 }).catch(e=>{
-                  // //console.log("Menu Not Found",e);
+                  // ////console.log("Menu Not Found",e);
                   return res.status(500).json({
                     status: false,
                     message: 'State Data Not Found',
@@ -241,7 +241,7 @@ router.post('/reply', (req, res) => {
                   })
                 });
               }).catch(e=>{
-                // //console.log("Menu Not Found",e);
+                // ////console.log("Menu Not Found",e);
                 return res.status(500).json({
                   status: false,
                   message: 'Menu Not Found',
@@ -263,7 +263,7 @@ router.post('/reply', (req, res) => {
                     message: 'Success'
                   })
               }).catch(e=>{
-                  // //console.log("Message Not Sent",e);
+                  // ////console.log("Message Not Sent",e);
                   return res.status(500).json({
                     status: false,
                     message: 'Message Not Sent',
@@ -271,7 +271,7 @@ router.post('/reply', (req, res) => {
                   })
                 });
             }).catch(e=>{
-              // //console.log("Menu Not Found",e);
+              // ////console.log("Menu Not Found",e);
               return res.status(500).json({
                 status: false,
                 message: 'Menu Not Found',
@@ -281,7 +281,7 @@ router.post('/reply', (req, res) => {
             }
             }
           }).catch(e=>{
-            // //console.log("Menu Name Not Found",e);
+            // ////console.log("Menu Name Not Found",e);
             return res.status(500).json({
               status: false,
               message: 'Menu Name Not Found',
@@ -307,7 +307,7 @@ router.post('/reply', (req, res) => {
                     message: 'Success'
                   }) 
                 }).catch(e=>{
-                  // //console.log("Menu Not Set",e);
+                  // ////console.log("Menu Not Set",e);
                   return res.status(500).json({
                     status: false,
                     message: 'Menu Not Set',
@@ -315,7 +315,7 @@ router.post('/reply', (req, res) => {
                   })
                 });
               }).catch(e=>{
-                  // //console.log("Message Not Sent",e);
+                  // ////console.log("Message Not Sent",e);
                   return res.status(500).json({
                     status: false,
                     message: 'Message Not Sent',
@@ -323,7 +323,7 @@ router.post('/reply', (req, res) => {
                   })
                 });
             }).catch(e=>{
-              // //console.log("Menu Not Found",e);
+              // ////console.log("Menu Not Found",e);
               return res.status(500).json({
                 status: false,
                 message: 'Menu Not Found',
@@ -331,7 +331,7 @@ router.post('/reply', (req, res) => {
               })
             });
           }).catch(e=>{
-            // //console.log("Last Menu Not Found",e);
+            // ////console.log("Last Menu Not Found",e);
             return res.status(500).json({
               status: false,
               message: 'Last Menu Not Found',
@@ -341,7 +341,7 @@ router.post('/reply', (req, res) => {
         }
       }
   }).catch(err=>{
-    // //console.log("Get Set problem",e);
+    // ////console.log("Get Set problem",e);
     return res.status(500).json({
       status: false,
       message: 'Get Set problem',
@@ -362,18 +362,18 @@ const getMenu = (name)=>{
 
 const getOrSetUser = (number)=>{
   let def = new Promise((resolve,reject)=>{
-    //// //console.log(number);
+    //// ////console.log(number);
     User.findOne({number:number},(err,userT)=>{
       if(err) reject(err);
       if(userT){
-        //// //console.log("find");
+        //// ////console.log("find");
         resolve(userT);
       }else{
         try {
           let user = new User({number:number});
-          //// //console.log("Save ",user);
+          //// ////console.log("Save ",user);
           user.save().then(u=>{
-            //// //console.log("save")
+            //// ////console.log("save")
               resolve(u);
           }).catch(e=>{
               reject(e);

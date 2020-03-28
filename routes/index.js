@@ -47,7 +47,7 @@ router.post('/messages',async (req, res) => {
   
   try{
     let msgs=req.body.messages,i=0;
-    console.log(msgs)
+    //console.log(msgs)
     if(!(msgs))
     return 
     while(i<msgs.length){
@@ -140,7 +140,7 @@ router.post('/messages',async (req, res) => {
           }
         }
         else if(menuName == "stateMenu") {
-          console.log("state menu",recvMsg)
+          //console.log("state menu",recvMsg)
           let menu= await Menu.findOne({name:"stateMenu"})
           let choice = parseInt(recvMsg);
           if(choice >= 1 && choice <= 33){
@@ -181,7 +181,7 @@ router.post('/messages',async (req, res) => {
         }
       }
       else{
-        console.log("here",recvMsg);
+        //console.log("here",recvMsg);
         if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
           try{
             let delStatus = await User.findOneAndDelete({'number':user.number});
@@ -202,7 +202,7 @@ router.post('/messages',async (req, res) => {
           menu.options.forEach(option => {
             replyMsg += option.slNo + ": *"+option.description+"*\n\n";
           });
-          console.log("Last sent");
+          //console.log("Last sent");
           await ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
@@ -215,7 +215,7 @@ router.post('/messages',async (req, res) => {
     res.status(200).json({err:false})
   }
   catch(e){
-    console.log(e);
+    //console.log(e);
     res.status(200).json({err:false})
   }
 });
