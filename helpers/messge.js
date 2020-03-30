@@ -1,15 +1,3 @@
-let changeTimezone = (date, ianatz) => {
-    var invdate = new Date(date.toLocaleString('en-US', {
-      timeZone: ianatz
-    }));
-    return new Date(date.getTime() + date.getTime() - invdate.getTime());
-}
-  
-const d = changeTimezone(new Date(), "Asia/Kolkata");
-const dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
-const [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
-
-
 exports.stateToMessage=(name,data,isNew=false,diff=0)=>{
     data=data.data
     return "In *"+name+"* there has been *"
@@ -31,5 +19,9 @@ exports.stateToMessageFormList=(diff)=>{
     return "New *"+(0-diff)+" Negative* Case(s) detected\n\n"
 }
 exports.starting=()=>{
+    var indiaTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+    let d = new Date(indiaTime);
+    let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
+    let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
     return "*New Update* :"+hh+':'+mm+"  "+da+'-'+mo+'-'+ye+'\n\n\n';
 }
