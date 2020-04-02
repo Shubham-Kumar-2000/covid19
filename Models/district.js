@@ -1,11 +1,12 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
+const Menu = require('./menu');
 const districtSchema =new Schema({
     'name': {
         type: String,
         required: true,
     },
-    'lastRecorded':{
+    'confirmedCases':{
         type:Number,
         require:true,
         default:0
@@ -15,19 +16,53 @@ const districtSchema =new Schema({
         default:"Unknown"
     }
 },{timestamps:true});
-stateSchema.index({ name: 'text' });
-stateSchema.statics.addNew=(name)=>{
-    let state=new State({name:name})
-    return state.save()
+districtSchema.index({ name: 'text' });
+districtSchema.statics.addOrUpdate= async (data)=>{
+    let district=null;
+    district = await District.findOne({'name':data.name,'stateName':data.stateName});
+    district.confirmedCases=data.confirmedCases;
+    if(!district){
+        district=new District(data)
+    }
+    let newDistrict = await district.save();
+    if(newDistrict){
+        let menu = await Menu.findOne({'name':'districtMenu@'+data.stateName});
+        if(!menu){
+            menu = new Menu({'name':'districtMenu@'+data.stateName,'command':'getDistrictMenu@'+data.stateName,'options':[]});
+            menu = await menu.save()
+        }
+        let oldDistrict = menu.options.find(x=>{
+            return x.description==district.name;
+
+        });
+        if(oldDistrict){
+            return newDistrict;
+        }else{
+            let maxSlNo = 0;
+            menu.options.forEach(x => {
+                if(x.slNo>maxSlNo)
+                    maxSlNo=x.slNo;
+            });
+            menu.options.push({
+                'slNo':maxSlNo+1,
+                'description':newDistrict.name,
+                'static':false,
+                'action':'getDistrictData'
+            });
+            let newMenu = await menu.save();
+            if(newMenu){
+                return newDistrict;
+            }
+        }
+    }
+    return null;
+    
 }
-stateSchema.statics.getAllStates=()=>{
-    return State.find()
+districtSchema.statics.getAllDistrict=()=>{
+    return District.find()
 }
-stateSchema.statics.getStateByName=(name)=>{
-    return State.findOne({name: name})
+districtSchema.statics.getDistrictByName=(name,stateName)=>{
+    return District.findOne({name: name,stateName:stateName});
 }
-stateSchema.statics.updateState=(name,num)=>{
-    return State
-        .findOneAndUpdate({name: name}, { $set: { lastRecorded: num } }, {new: true} )
-}
-const State = module.exports = mongoose.model('State', stateSchema);
+
+const District = module.exports = mongoose.model('District', districtSchema);

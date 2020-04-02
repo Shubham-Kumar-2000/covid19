@@ -28,3 +28,7 @@ exports.starting=()=>{
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
     return "*New Update* :"+hh+':'+mm+"  "+da+'-'+mo+'-'+ye+'\n\n\n';
 }
+
+exports.DistrictToMessage=(districtData)=>{
+    return `There are *${districtData.confirmedCases}* cases in *${districtData.name}* district under *${districtData.stateName}* state`;
+}

@@ -6,6 +6,7 @@ const User  = require('../Models/users');
 const ChatApi= require('../helpers/chatApi')
 const Message=require('../helpers/messge')
 const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
+const District  = require('../Models/district');
 
 
 router.post('/createmenu', (req, res) => {
@@ -146,7 +147,8 @@ router.post('/messages',async (req, res) => {
           let menu= await Menu.findOne({name:"stateMenu"})
           let choice = parseInt(recvMsg);
           if(choice >= 1 && choice <= 34){
-            let stateData=await util.getStateData(menu.options[choice-1].description)
+            let stateData=await util.getStateData(menu.options[choice-1].description);
+            let stateName = menu.options[choice-1].description;
             if(stateData.data.stateData.total==0)
             await ChatApi.sendmsg({
               phone:user.number,
@@ -156,8 +158,23 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:Message.stateToMessage(menu.options[choice-1].description,stateData)
-            })
-            let updateUser=await User.setLastServedMenuName(user.number,"");
+            });
+
+            let menu2= await Menu.findOne({name:"districtMenu@"+stateName});
+            if(menu2){
+              menu2.options.forEach(option => {
+                replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+              });
+              replyMsg += "Send Reply witn any option number....";
+              await ChatApi.sendmsg({
+                phone:user.number,
+                body:replyMsg
+              })
+              let updateUser=await User.setLastServedMenuName(user.number,"districtMenu@"+stateName);
+            }else{
+              let updateUser=await User.setLastServedMenuName(user.number,"");
+            }
+            
           }
           else{
             menu.options.forEach(option => {
@@ -169,6 +186,46 @@ router.post('/messages',async (req, res) => {
               body:replyMsg
             })
           }
+        }else if(menuName.indexOf('districtMenu@') !=-1) {
+          let districtMenu = Menu.findOne({'name':menuName});
+          if(districtMenu){
+              let stateName = menuName.split('@')[1];
+              if(choice >= 1 && choice <= districtMenu.options.length){
+                let districtName = districtMenu.options[choice-1].description;
+                let districtData = District.getDistrictByName(districtName,stateName);
+                if(!districtData|| districtData.confirmedCases==0)
+                await ChatApi.sendmsg({
+                  phone:user.number,
+                  body:"Not a single case in this District.\n\nStill be Safe and be at Home"
+                })
+                else
+                await ChatApi.sendmsg({
+                  phone:user.number,
+                  body:Message.DistrictToMessage(districtData)
+                });
+    
+                let menu2= await Menu.findOne({name:"districtMenu@"+stateName});
+                
+              }
+              else{
+                menu.options.forEach(option => {
+                  replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+                });
+                replyMsg += "Send Reply witn any option number....";
+                await ChatApi.sendmsg({
+                  phone:user.number,
+                  body:replyMsg
+                })
+              }
+
+          }else{
+            let replyMsg = "No data available";
+            await ChatApi.sendmsg({
+              phone:user.number,
+              body:replyMsg
+            })
+          }
+          let updateUser=await User.setLastServedMenuName(user.number,"");
         }else{
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
           menu.options.forEach(option => {
