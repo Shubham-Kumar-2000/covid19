@@ -125,7 +125,7 @@ router.post('/messages',async (req, res) => {
             let menu= await Menu.findOne({name:"baseMenu"})
             await ChatApi.sendmsg({
               phone:user.number,
-              body:menu.options[choice-1].output
+              body:menu.options[choice-1].output.replace(';','\n')
             })
             let updateUser=await User.setLastServedMenuName(user.number,"");
           }
