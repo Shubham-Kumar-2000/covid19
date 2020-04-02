@@ -18,6 +18,9 @@ exports.stateToMessageFormList=(diff)=>{
     else
     return "New *"+(0-diff)+" Negative* Case(s) detected\n\n"
 }
+exports.stateToMessageDeaths=(diff)=>{
+    return "New *"+diff+" Death(s)* detected\n\n"
+}
 exports.starting=()=>{
     var indiaTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
     let d = new Date(indiaTime);
