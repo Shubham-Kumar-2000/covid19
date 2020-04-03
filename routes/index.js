@@ -163,7 +163,7 @@ router.post('/messages',async (req, res) => {
 
             let menu2= await Menu.findOne({name:"districtMenu@"+stateName});
             if(menu2){
-              replyMsg = `We are having information about these districts under the *${stateName}* state\n`;
+              replyMsg = `We are having information about these districts under the *${stateName}* state\n\n`;
               menu2.options.forEach(option => {
                 replyMsg += option.slNo + ": *"+option.description+"*\n\n";
               });
