@@ -8,6 +8,9 @@ const fetch = require("node-fetch");
     "body": "shubham"
 }*/
 exports.sendmsg=async (msg)=>{
+    if(process.env.MODE=='DEV'&&msg.phone!='919162023260'){
+        return true;
+    }
     try{
         if(!(process.env.CHAT_API_INSTANCE&&process.env.CHAT_API_TOKEN))
         throw "Enviroment Variables Not set"

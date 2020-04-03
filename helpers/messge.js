@@ -30,5 +30,5 @@ exports.starting=()=>{
 }
 
 exports.DistrictToMessage=(districtData)=>{
-    return `There are *${districtData.confirmedCases}* cases in *${districtData.name}* district under *${districtData.stateName}* state`;
+    return `*There are ${districtData.confirmedCases} confirmed cases in ${districtData.name} district under ${districtData.stateName} state*`;
 }
