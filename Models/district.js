@@ -18,12 +18,13 @@ const districtSchema =new Schema({
 },{timestamps:true});
 districtSchema.index({ name: 'text' });
 districtSchema.statics.addOrUpdate= async (data)=>{
+    try{
     let district=null;
     district = await District.findOne({'name':data.name,'stateName':data.stateName});
-    district.confirmedCases=data.confirmedCases;
     if(!district){
         district=new District(data)
     }
+    district.confirmedCases=data.confirmedCases;
     let newDistrict = await district.save();
     if(newDistrict){
         let menu = await Menu.findOne({'name':'districtMenu@'+data.stateName});
@@ -56,7 +57,10 @@ districtSchema.statics.addOrUpdate= async (data)=>{
         }
     }
     return null;
-    
+    }catch(e){
+        console.log(e)
+        return null
+    }
 }
 districtSchema.statics.getAllDistrict=()=>{
     return District.find()

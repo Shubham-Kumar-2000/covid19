@@ -210,12 +210,12 @@ exports.getUpdates=async()=>{
             state=await State.addNew(name)
             live= await this.getStateData(name);
             // district update starts
-            let districts = Object.keys(districtWiseData[stateNames[i]].districtData);
+            let districts = Object.keys(districtWiseData[name].districtData);
             districts.forEach(async (district) => {
                 let conf = await District.addOrUpdate({
                     name: district,
-                    stateName: stateNames[i],
-                    confirmedCases: districtWiseData[stateNames[i]].districtData[district].confirmed
+                    stateName: name,
+                    confirmedCases: districtWiseData[name].districtData[district].confirmed
                 })
             });
             // district update ends
