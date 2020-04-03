@@ -72,5 +72,49 @@ districtSchema.statics.getAllDistrict=()=>{
 districtSchema.statics.getDistrictByName=(name,stateName)=>{
     return District.findOne({name: name,stateName:stateName});
 }
+districtSchema.statics.search = function(text){
+    let txt=text.split(" ")
+    var result = [];
+
+    var loop = function (start,depth,prefix)
+    {
+        for(var i=start; i<txt.length; i++)
+        {
+            var next;
+            if(prefix&&prefix!='')
+            next = prefix+' '+txt[i];
+            else
+            next = prefix+txt[i];
+            if (depth > 0)
+                loop(i+1,depth-1,next);
+            else
+                result.push(next);
+        }
+    }
+
+    for(var i=0; i<txt.length; i++)
+    {
+        loop(0,i,'');
+    }
+    let temp;
+    txt=result;
+    txt.forEach((element,index) => {
+        element=('^'+element+'$')
+        if(temp){
+			temp+=('|'+element)
+        }
+        else{
+            temp=element
+        }
+    });
+    text=temp;
+    return District.find({
+        name:{
+            $regex:new RegExp(text),
+            $options: "sim"
+        }
+    
+    })
+}
 
 const District = module.exports = mongoose.model('District', districtSchema);

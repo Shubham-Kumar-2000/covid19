@@ -7,7 +7,7 @@ const ChatApi= require('../helpers/chatApi')
 const Message=require('../helpers/messge')
 const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
 const District  = require('../Models/district');
-
+const State  = require('../Models/state');
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
@@ -47,6 +47,30 @@ res.status(200).json({date:require('../helpers/messge').starting()})
 router.get('/sendMessages',async (req, res) => {
   res.status(200).json({s:'s'})
   util.getUpdates()
+}
+)
+router.get('/total',async (req, res) => {
+  try{
+  let users=await User.all();
+  res.status(200).json({err:false,users:users.length})
+  }
+  catch(e){
+    console.log(e)
+    res.status(200).json({err:true,msg:e})
+  }
+}
+)
+router.post('/search',async (req, res) => {
+  try{
+  let states=await State.search(req.body.text);
+  let districts=await District.search(req.body.text);
+  
+  res.status(200).json({err:false,state:states,district:districts})
+  }
+  catch(e){
+    console.log(e)
+    res.status(200).json({err:true,msg:e})
+  }
 }
 )
 router.post('/messages',async (req, res) => {
@@ -244,20 +268,33 @@ router.post('/messages',async (req, res) => {
         }
       }
       else{
-        if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
-          try{
-            let delStatus = await User.findOneAndDelete({'number':user.number});
+          let states=await State.search(recvMsg);
+          let districts=await District.search(recvMsg);
+          if(states.length!=0||districts.length!=0){
+            replyMsg="Some Data based on our understanding of your msg....\n\n";
+            if(states.length!=0){
+              replyMsg+="*State Data* :\n\n";
+              let ind=0;
+              while(ind<states.length){
+                let state=states[ind];
+                replyMsg+=Message.searchState(state);
+                ind+=1;
+              }
+            }
+            if(districts.length!=0){
+              replyMsg+="*Districts Data* :\n\n";
+              let ind=0;
+              while(ind<districts.length){
+                let district=districts[ind];
+                replyMsg+=(Message.DistrictToMessage(district)+"\n\n");
+                ind+=1;
+              }
+            }
+            replyMsg+="*For more information follow the menu.*"
             await ChatApi.sendmsg({
               phone:user.number,
-              body:"Your have been unsubscribed. Reply Hi to subscribe again"
+              body:replyMsg
             });
-          }catch(err){
-            await ChatApi.sendmsg({
-              phone:user.number,
-              body:"Internal server error! Try again or contact administrator"
-            });
-          }
-          
         }else{
         let menuName=user.lastServedMenuName;
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})

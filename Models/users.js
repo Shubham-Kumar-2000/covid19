@@ -23,4 +23,7 @@ const userSchema =new Schema({
 userSchema.statics.setLastServedMenuName=(num,menuName)=>{
     return User.findOneAndUpdate({number:num},{ $set: { lastServedMenuName: menuName } })
 }
+userSchema.statics.all=()=>{
+    return User.find()
+}
 const User=module.exports = mongoose.model('User', userSchema);

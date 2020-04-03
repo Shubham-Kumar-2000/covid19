@@ -8,7 +8,7 @@ const fetch = require("node-fetch");
     "body": "shubham"
 }*/
 exports.sendmsg=async (msg)=>{
-    if(process.env.MODE=='DEV'&&msg.phone!='919162023260'){
+    if(process.env.MODE=='DEV'&&msg.phone!='919748669897'){
         return true;
     }
     try{
