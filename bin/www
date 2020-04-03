@@ -27,7 +27,6 @@ if(process.env.CLUSTER === 'yes') {
       //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
          let message = await Utills.getUpdates() ? "Updated States Successfully !!!" : "Already Up-To Date...";
-         let message1 = await Utills.updateDistrcit() ? "Updated Districts Successfully !!!" : "Some error";
          console.log(message1);
        //console.log(message+" Time now: ",new Date().toString());
        }

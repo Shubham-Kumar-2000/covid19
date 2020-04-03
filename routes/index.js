@@ -52,7 +52,6 @@ router.get('/sendMessages',async (req, res) => {
 router.post('/messages',async (req, res) => {
   try{
     let msgs=req.body.messages,i=0;
-    //console.log(msgs)
     if(!(msgs))
     {throw "undefined" }
     while(i<msgs.length){
@@ -79,7 +78,6 @@ router.post('/messages',async (req, res) => {
         }
 
       }
-      //console.log(" here i am")
       if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
         try{
           let delStatus = await User.findOneAndDelete({'number':user.number});
@@ -144,7 +142,6 @@ router.post('/messages',async (req, res) => {
           }
         }
         else if(menuName == "stateMenu") {
-          console.log("state menu",recvMsg)
           let menu= await Menu.findOne({name:"stateMenu"})
           let choice = parseInt(recvMsg);
           if(choice >= 1 && choice <= 34){
@@ -190,17 +187,12 @@ router.post('/messages',async (req, res) => {
           }
         }else if(menuName.indexOf('districtMenu@') !=-1) {
           let districtMenu =await Menu.findOne({'name':menuName});
-          //console.log("dis menu ",districtMenu);
           if(districtMenu){
               let stateName = menuName.split('@')[1];
-              console.log("state name ",stateName);
               let choice = parseInt(recvMsg);
-              console.log(choice,"  ||||| ",districtMenu.options.length)
               if(choice >= 1 && choice <= districtMenu.options.length){
                 let districtName = districtMenu.options[choice-1].description;
-                console.log("dis name ",districtName);
                 let districtData =await District.getDistrictByName(districtName,stateName);
-                console.log("dis data ",districtData);
                 if(!districtData|| districtData.confirmedCases==0)
                 await ChatApi.sendmsg({
                   phone:user.number,
@@ -249,7 +241,6 @@ router.post('/messages',async (req, res) => {
         }
       }
       else{
-        console.log("here",recvMsg);
         if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
           try{
             let delStatus = await User.findOneAndDelete({'number':user.number});
@@ -270,7 +261,6 @@ router.post('/messages',async (req, res) => {
           menu.options.forEach(option => {
             replyMsg += option.slNo + ": *"+option.description+"*\n\n";
           });
-          console.log("Last sent");
           await ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg

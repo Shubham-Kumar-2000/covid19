@@ -24,6 +24,10 @@ districtSchema.statics.addOrUpdate= async (data)=>{
     if(!district){
         district=new District(data)
     }
+    else{
+        if(district.confirmedCases==data.confirmedCases)
+        return null
+    }
     district.confirmedCases=data.confirmedCases;
     let newDistrict = await district.save();
     if(newDistrict){

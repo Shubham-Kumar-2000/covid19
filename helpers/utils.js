@@ -8,7 +8,7 @@ const StateMethods = require('../Models/stateMethods');
 const ChatApi=require('./chatApi')
 const District=require('../Models/district')
 const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
-
+const Menu=require('../Models/menu')
 function check(arr,nn) {
     let i=0;
     while(i<arr.length){
@@ -210,14 +210,25 @@ exports.getUpdates=async()=>{
             state=await State.addNew(name)
             live= await this.getStateData(name);
             // district update starts
-            let districts = Object.keys(districtWiseData[name].districtData);
-            districts.forEach(async (district) => {
+            let districts = Object.keys(districtWiseData[name].districtData),h1=0;
+            if(districts)
+            while(h1<districts.length){
+                let district=districts[h1];
+                if(district!=""&&district!=" ")
+                {let conf = await District.addOrUpdate({
+                    name: district,
+                    stateName: name,
+                    confirmedCases: districtWiseData[name].districtData[district].confirmed
+                })}
+                h1+=1;
+            }
+            /*districts.forEach(async (district) => {
                 let conf = await District.addOrUpdate({
                     name: district,
                     stateName: name,
                     confirmedCases: districtWiseData[name].districtData[district].confirmed
                 })
-            });
+            });*/
             // district update ends
             if((state.lastRecorded!=live.data.stateData.total)){
                 if(message.length<=0)

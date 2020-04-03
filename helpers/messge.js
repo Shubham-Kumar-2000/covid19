@@ -4,8 +4,8 @@ exports.stateToMessage=(name,data,isNew=false,diff=0)=>{
     +data.stateData.total+"* confirmed cases.\nRecovered: "
     +data.stateData.rocovered+"\nDeaths: "
     +data.stateData.deaths+"\n\n\nThe last case reported was on "
-    +data.stateData.lastreported.reportedOn+" in the *"
-    +data.stateData.lastreported.district+"* district and is currently "
+    +data.stateData.lastreported.reportedOn+" in *"
+    +data.stateData.lastreported.district+"* and is currently "
     +data.stateData.lastreported.status+".\nGender: "
     +data.stateData.lastreported.gender+"\n\n\n"
 }
