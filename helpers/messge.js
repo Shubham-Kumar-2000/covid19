@@ -30,7 +30,7 @@ exports.starting=()=>{
 }
 
 exports.DistrictToMessage=(districtData)=>{
-    return `*There are ${districtData.confirmedCases} confirmed cases in ${districtData.name} district under ${districtData.stateName} state.*`;
+    return `There are *${districtData.confirmedCases} confirmed* cases in *${districtData.name}* district under *${districtData.stateName}* state.`;
 }
 exports.searchState=(state)=>{
     return "\nIn *"+state.name+"* there are *"+state.lastRecorded+"* confirmed COVID-19 case(s) from which *"+state.lastRecordedDeaths+"* people died.\n\n";
