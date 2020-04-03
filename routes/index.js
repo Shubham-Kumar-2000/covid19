@@ -93,6 +93,9 @@ router.post('/messages',async (req, res) => {
         }
         i+=1;continue;
       }
+      if(recvMsg.toLocaleLowerCase()=='hi'){
+        user.lastServedMenuName="";
+      }
       if(parseInt(recvMsg)) {
         let menuName=user.lastServedMenuName;
         replyMsg += "MENU:\n\n";
