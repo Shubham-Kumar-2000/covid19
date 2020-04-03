@@ -332,4 +332,72 @@ exports.sendMessageToAll2 = (messageToSend)=>{
     });
     return mainPromise;
 }
+
+exports.updateDistrcit= async ()=>{
+    let districtApi = 'https://api.covid19india.org/state_district_wise.json';
+    let liveData=await fetch(districtApi).then(result=>{return result.json()})
+    if(!liveData)
+        throw "Api not responding";
+        let states = Object.keys(liveData)||[];
+        states.forEach(async state=>{
+            let districtObj = liveData[state]['districtData'];
+            let districts = Object.keys(districtObj)||[];
+            districts.forEach(async district=>{
+                let confirmedCases = districtObj[district]['confirmed'];
+                let updated = await this.addOrUpdate({
+                    'name':district,
+                    'stateName':state,
+                    'confirmedCases':confirmedCases
+
+                });
+                if(updated){
+                    return true;
+                }else{
+                    return false;
+                }
+            })
+        })
+   
+}
+exports.addOrUpdate= async (data)=>{
+    let district=null;
+    district = await District.findOne({'name':data.name,'stateName':data.stateName});
+    if(!district){
+        district=new District(data)
+    }
+    district.confirmedCases=data.confirmedCases;
+    let newDistrict = await district.save();
+    if(newDistrict){
+        let menu = await Menu.findOne({'name':'districtMenu@'+data.stateName});
+        if(!menu){
+            menu = new Menu({'name':'districtMenu@'+data.stateName,'command':'getDistrictMenu@'+data.stateName,'options':[]});
+            menu = await menu.save()
+        }
+        let oldDistrict = menu.options.find(x=>{
+            return x.description==district.name;
+
+        });
+        if(oldDistrict){
+            return newDistrict;
+        }else{
+            let maxSlNo = 0;
+            menu.options.forEach(x => {
+                if(x.slNo>maxSlNo)
+                    maxSlNo=x.slNo;
+            });
+            menu.options.push({
+                'slNo':maxSlNo+1,
+                'description':newDistrict.name,
+                'static':false,
+                'action':'getDistrictData'
+            });
+            let newMenu = await menu.save();
+            if(newMenu){
+                return newDistrict;
+            }
+        }
+    }
+    return null;
+    
+}
    
