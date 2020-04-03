@@ -144,7 +144,7 @@ router.post('/messages',async (req, res) => {
         else if(menuName == "stateMenu") {
           let menu= await Menu.findOne({name:"stateMenu"})
           let choice = parseInt(recvMsg);
-          if(choice >= 1 && choice <= 34){
+          if(choice >= 1 && choice <= 35){
             let stateData=await util.getStateData(menu.options[choice-1].description);
             let stateName = menu.options[choice-1].description;
             if(stateData.data.stateData.total==0)
