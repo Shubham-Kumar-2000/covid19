@@ -6,6 +6,7 @@ const State = require('../Models/state');
 const request=require('request-promise')
 const StateMethods = require('../Models/stateMethods');
 const ChatApi=require('./chatApi')
+const District=require('../Models/district')
 const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
 
 function check(arr,nn) {
@@ -194,6 +195,7 @@ exports.getUpdates=async()=>{
         //console.log('Hello');
         let message='';
         let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
+        let districtWiseData=await fetch("https://api.covid19india.org/state_district_wise.json").then(result=>{return result.json()})
         if((!(liveData.success)))
         throw "Api not responding"
         liveData=liveData.data;
@@ -207,9 +209,17 @@ exports.getUpdates=async()=>{
             if(!(state))
             state=await State.addNew(name)
             live= await this.getStateData(name);
-            //state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
+            // district update starts
+            let districts = Object.keys(districtWiseData[stateNames[i]].districtData);
+            districts.forEach(district => {
+                let conf = await District.addOrUpdate({
+                    name: district,
+                    stateName: stateNames[i],
+                    confirmedCases: districtWiseData[stateNames[i]].districtData[district].confirmed
+                })
+            });
+            // district update ends
             if((state.lastRecorded!=live.data.stateData.total)){
-                
                 if(message.length<=0)
                 message+=Message.starting()
                 message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded)+Message.stateToMessage(name,live))
