@@ -210,7 +210,9 @@ exports.getUpdates=async()=>{
             state=await State.addNew(name)
             live= await this.getStateData(name);
             // district update starts
-            let districts = Object.keys(districtWiseData[name].districtData),h1=0;
+            let districts=null,h1=0;
+            if(districtWiseData[name]){
+            districts = Object.keys(districtWiseData[name].districtData);}
             if(districts)
             while(h1<districts.length){
                 let district=districts[h1];
