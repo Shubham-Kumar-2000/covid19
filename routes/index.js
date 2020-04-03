@@ -55,7 +55,7 @@ router.post('/messages',async (req, res) => {
     let msgs=req.body.messages,i=0;
     console.log(msgs)
     if(!(msgs))
-    return 
+    {throw "undefined" }
     while(i<msgs.length){
       let message=msgs[i];
       if(message.fromMe)
