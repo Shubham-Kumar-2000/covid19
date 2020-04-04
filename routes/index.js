@@ -85,8 +85,10 @@ router.post('/messages',async (req, res) => {
       if(message.fromMe)
       {i+=1;continue;}
       let fromNum=message.chatId.split("@")[0];
-      let recvMsg=await translate(message.body, { to: "en" });
-      recvMsg=recvMsg.text;
+      let recvMsg=message.body;
+      if(isNaN(recvMsg))
+      { recvMsg=await translate(message.body, { to: "en" });
+      recvMsg=recvMsg.text;}
       let hindiZero='०';
       if(recvMsg.length==1){
         hindiZero=recvMsg.charCodeAt(0)-hindiZero.charCodeAt(0);
