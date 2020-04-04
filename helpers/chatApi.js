@@ -20,10 +20,17 @@ exports.sendmsg=async (msg,change)=>{
             let i=0;
             console.log(text)
             while(i<text.length){
-                if(text[i]!=""||text[i]!=" ")
-                text[i]=await translate(text[i], { to: "hi" });
-                text[i]=text[i].text;
-                console.log(text[i])
+                if(text[i]!=""||text[i]!=" "){
+                    text[i]=text[i].split('*');
+                    let j=0;
+                    while(j<text[i].length){
+                        if(text[i][j]!=""||text[i][j]!=" "){
+                        text[i][j]=await translate(text[i][j], { to: "hi" });
+                        text[i][j]=text[i][j].text;}
+                        j+=1;
+                    }
+                    text[i]=text[i].join('*');
+                }
                 i+=1;
             }
             msg.body=text.join('\n');
