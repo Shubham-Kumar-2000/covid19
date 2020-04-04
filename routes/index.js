@@ -9,7 +9,7 @@ const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWIL
 const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
-var  translate = require("google-translate-api");
+var  {translate} = require("google-translate-api-browser");
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
@@ -87,8 +87,16 @@ router.post('/messages',async (req, res) => {
       let fromNum=message.chatId.split("@")[0];
       let recvMsg=message.body;
       if(isNaN(recvMsg))
-      { recvMsg=await translate(message.body, { to: "en" });
-      recvMsg=recvMsg.text;}
+      { 
+        try{
+        recvMsg=await translate(message.body, { to: "en" });
+        recvMsg=recvMsg.text;
+        }
+        catch(e){
+          console.log(e);
+          recvMsg=message.body;
+        }
+      }
       let hindiZero='०';
       if(recvMsg.length==1){
         hindiZero=recvMsg.charCodeAt(0)-hindiZero.charCodeAt(0);

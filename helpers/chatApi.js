@@ -1,7 +1,7 @@
 const User  = require('../Models/users');
 const request=require('request-promise')
 const fetch = require("node-fetch");
-var  translate  = require("google-translate-api");
+var  {translate}  = require("google-translate-api-browser");
 
 /*{
     "chatId": "hjvj",
@@ -38,7 +38,14 @@ exports.sendmsg=async (msg,change)=>{
         if(!(process.env.CHAT_API_INSTANCE&&process.env.CHAT_API_TOKEN))
         throw "Enviroment Variables Not set"
         if(change){
-            msg.body=await trans(msg.body);
+            try{
+                let bb=await trans(msg.body);
+                msg.body=bb;
+            }
+            catch(e){
+                console.log(e)
+                msg.body+='\n\nSorry our translator is not working.We will fix it soon.';
+            }
         }
         let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
         if(!(sentMessage.sent))
