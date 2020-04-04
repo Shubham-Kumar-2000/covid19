@@ -87,6 +87,7 @@ router.post('/messages',async (req, res) => {
       let fromNum=message.chatId.split("@")[0];
       let recvMsg=await translate(message.body, { to: "en" });
       recvMsg=recvMsg.text;
+      console.log(recvMsg);
       let replyMsg="";
       let user=await User.findOne({number:fromNum})
       if(!(user))
