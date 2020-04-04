@@ -1,7 +1,7 @@
 const User  = require('../Models/users');
 const request=require('request-promise')
 const fetch = require("node-fetch");
-var { translate } = require("google-translate-api-browser");
+var  translate  = require("google-translate-api");
 
 /*{
     "chatId": "hjvj",

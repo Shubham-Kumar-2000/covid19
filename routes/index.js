@@ -9,7 +9,7 @@ const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWIL
 const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
-var { translate } = require("google-translate-api-browser");
+var  translate = require("google-translate-api");
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
