@@ -87,7 +87,19 @@ router.post('/messages',async (req, res) => {
       let fromNum=message.chatId.split("@")[0];
       let recvMsg=await translate(message.body, { to: "en" });
       recvMsg=recvMsg.text;
-      console.log(recvMsg);
+      let hindiZero='०';
+      if(recvMsg.length==1){
+        hindiZero=recvMsg.charCodeAt(0)-hindiZero.charCodeAt(0);
+        if(hindiZero>=0&&hindiZero<=9)
+        recvMsg=hindiZero;
+      }
+      if(recvMsg.length==2){
+        let temporary,temporary1;
+        temporary=recvMsg.charCodeAt(0)-hindiZero.charCodeAt(0);
+        temporary1=recvMsg.charCodeAt(1)-hindiZero.charCodeAt(0);
+        if((temporary>=0&&temporary<=9)&&(temporary1>=0&&temporary1<=9))
+        recvMsg=String(temporary)+String(temporary1);
+      }
       let replyMsg="";
       let user=await User.findOne({number:fromNum})
       if(!(user))
@@ -112,12 +124,12 @@ router.post('/messages',async (req, res) => {
           await ChatApi.sendmsg({
             phone:user.number,
             body:"Your have been unsubscribed. Reply Hi to subscribe again"
-          });
+          },user.lang!='ENGLISH');
         }catch(err){
           await ChatApi.sendmsg({
             phone:user.number,
             body:"Internal server error! Try again or contact administrator"
-          });
+          },user.lang!='ENGLISH');
         }
         i+=1;continue;
       }
@@ -135,7 +147,7 @@ router.post('/messages',async (req, res) => {
           await ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
-          })
+          },user.lang!='ENGLISH')
           let updateUser=await User.setLastServedMenuName(user.number,"baseMenu");
         }
         else if(menuName == "baseMenu"){
@@ -149,19 +161,24 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
-            })
+            },user.lang!='ENGLISH')
             let updateUser=await User.setLastServedMenuName(user.number,"stateMenu");
           }
           else if(choice >= 2 && choice <= 5){
             let menu= await Menu.findOne({name:"baseMenu"})
             if(choice == 4) {
-              // Translate and store
-              await User.setLang(user.number,"HINDI");
+              replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
+              await ChatApi.sendmsg({
+                phone:user.number,
+                body:replyMsg
+              },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
+              //await User.setLang(user.number,"HINDI");
             }
             await ChatApi.sendmsg({
               phone:user.number,
               body:menu.options[choice-1].output.split(';').join('\n')
-            })
+            },user.lang!='ENGLISH')
             let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");
           }
           else{
@@ -172,7 +189,7 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
-            })
+            },user.lang!='ENGLISH')
           }
         }
         else if(menuName == "stateMenu") {
@@ -185,12 +202,12 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:"Not a single case in this state.\n\nStill be Safe and be at Home"
-            })
+            },user.lang!='ENGLISH')
             else
             await ChatApi.sendmsg({
               phone:user.number,
               body:Message.stateToMessage(menu.options[choice-1].description,stateData)
-            });
+            },user.lang!='ENGLISH');
 
             let menu2= await Menu.findOne({name:"districtMenu@"+stateName});
             if(menu2){
@@ -202,7 +219,7 @@ router.post('/messages',async (req, res) => {
               await ChatApi.sendmsg({
                 phone:user.number,
                 body:replyMsg
-              })
+              },user.lang!='ENGLISH')
               let updateUser=await User.setLastServedMenuName(user.number,"districtMenu@"+stateName);
             }else{
               let updateUser=await User.setLastServedMenuName(user.number,"");
@@ -217,7 +234,7 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
-            })
+            },user.lang!='ENGLISH')
           }
         }else if(menuName.indexOf('districtMenu@') !=-1) {
           let districtMenu =await Menu.findOne({'name':menuName});
@@ -231,12 +248,12 @@ router.post('/messages',async (req, res) => {
                 await ChatApi.sendmsg({
                   phone:user.number,
                   body:"Not a single case in this District.\n\nStill be Safe and be at Home"
-                })
+                },user.lang!='ENGLISH')
                 else
                 await ChatApi.sendmsg({
                   phone:user.number,
                   body:Message.DistrictToMessage(districtData)
-                });
+                },user.lang!='ENGLISH');
                 let updateUser=await User.setLastServedMenuName(user.number,"");
               }
               else{
@@ -249,7 +266,7 @@ router.post('/messages',async (req, res) => {
                 await ChatApi.sendmsg({
                   phone:user.number,
                   body:replyMsg
-                })
+                },user.lang!='ENGLISH')
               }
 
           }else{
@@ -257,7 +274,7 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
-            });
+            },user.lang!='ENGLISH');
             let updateUser=await User.setLastServedMenuName(user.number,"");
           }
           
@@ -269,7 +286,7 @@ router.post('/messages',async (req, res) => {
           await ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
-          })
+          },user.lang!='ENGLISH')
           let updateUser=await User.setLastServedMenuName(user.number,(menuName == "" ? "baseMenu" : menuName));
         
         }
@@ -280,7 +297,7 @@ router.post('/messages',async (req, res) => {
           await ChatApi.sendmsg({
             phone:user.number,
             body:"Your Feedback: "+recvMsg+"\n\n*Thanks for your valuable feedback :)*"
-          })
+          },user.lang!='ENGLISH')
           let updateUser=await User.setLastServedMenuName(user.number,"");
         }
         else {
@@ -310,7 +327,7 @@ router.post('/messages',async (req, res) => {
             await ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
-            });
+            },user.lang!='ENGLISH');
         }else{
         let menuName=user.lastServedMenuName;
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
@@ -320,7 +337,7 @@ router.post('/messages',async (req, res) => {
           await ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
-          })
+          },user.lang!='ENGLISH')
           let updateUser=await User.setLastServedMenuName(user.number,(menuName == "" ? "baseMenu" : menuName));
         }
       }
