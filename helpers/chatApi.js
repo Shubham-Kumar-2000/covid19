@@ -8,6 +8,29 @@ var { translate } = require("google-translate-api-browser");
     "phone": 919748669897,
     "body": "shubham"
 }*/
+async function trans(text){
+    text=text.split('\n');
+    let i=0;
+    console.log(text)
+    while(i<text.length){
+        if(text[i]!=""||text[i]!=" "){
+            text[i]=text[i].split('*');
+            let j=0;
+            while(j<text[i].length){
+                if(text[i][j]!=""||text[i][j]!=" "){
+                    text[i][j]=await translate(text[i][j], { to: "hi" });
+                    text[i][j]=text[i][j].text;
+                    if(j%2==0)
+                    text[i][j]+=' ';
+                }
+                j+=1;
+            }
+            text[i]=text[i].join('*');
+        }
+        i+=1;
+    }
+    return text.join('\n');
+}
 exports.sendmsg=async (msg,change)=>{
     if(process.env.MODE=='DEV'&&msg.phone!='919748669897'){
         return true;
@@ -16,27 +39,7 @@ exports.sendmsg=async (msg,change)=>{
         if(!(process.env.CHAT_API_INSTANCE&&process.env.CHAT_API_TOKEN))
         throw "Enviroment Variables Not set"
         if(change){
-            let text=msg.body.split('\n');
-            let i=0;
-            console.log(text)
-            while(i<text.length){
-                if(text[i]!=""||text[i]!=" "){
-                    text[i]=text[i].split('*');
-                    let j=0;
-                    while(j<text[i].length){
-                        if(text[i][j]!=""||text[i][j]!=" "){
-                            text[i][j]=await translate(text[i][j], { to: "hi" });
-                            text[i][j]=text[i][j].text;
-                            if(j%2==0)
-                            text[i][j]+=' ';
-                        }
-                        j+=1;
-                    }
-                    text[i]=text[i].join('*');
-                }
-                i+=1;
-            }
-            msg.body=text.join('\n');
+            msg.body=await trans(msg.body);
         }
         let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
         console.log(sentMessage)

@@ -21,7 +21,7 @@ const userSchema =new Schema({
 },{timestamps:true});
 
 userSchema.statics.setLang=(num,lang)=>{
-    return User.findOneAndUpdate({number:num},{ $set: { lang: lang } })
+    return User.findOneAndUpdate({number:num},{ $set: { lang: lang } },{new:true})
 }
 userSchema.statics.setLastServedMenuName=(num,menuName)=>{
     return User.findOneAndUpdate({number:num},{ $set: { lastServedMenuName: menuName } })

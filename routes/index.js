@@ -121,12 +121,12 @@ router.post('/messages',async (req, res) => {
       if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
         try{
           let delStatus = await User.findOneAndDelete({'number':user.number});
-          await ChatApi.sendmsg({
+           ChatApi.sendmsg({
             phone:user.number,
             body:"Your have been unsubscribed. Reply Hi to subscribe again"
           },user.lang!='ENGLISH');
         }catch(err){
-          await ChatApi.sendmsg({
+           ChatApi.sendmsg({
             phone:user.number,
             body:"Internal server error! Try again or contact administrator"
           },user.lang!='ENGLISH');
@@ -144,7 +144,7 @@ router.post('/messages',async (req, res) => {
           menu.options.forEach(option => {
             replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
-          await ChatApi.sendmsg({
+           ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
           },user.lang!='ENGLISH')
@@ -158,7 +158,7 @@ router.post('/messages',async (req, res) => {
               replyMsg += option.slNo + " : *"+option.description+"*\n\n";
             });
             replyMsg += "Send Reply witn any option number....";
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
             },user.lang!='ENGLISH')
@@ -168,14 +168,14 @@ router.post('/messages',async (req, res) => {
             let menu= await Menu.findOne({name:"baseMenu"})
             if(choice == 4) {
               replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
-              await ChatApi.sendmsg({
+               ChatApi.sendmsg({
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
               let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
-              //await User.setLang(user.number,"HINDI");
+              
             }
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:menu.options[choice-1].output.split(';').join('\n')
             },user.lang!='ENGLISH')
@@ -186,7 +186,7 @@ router.post('/messages',async (req, res) => {
             menu.options.forEach(option => {
               replyMsg += option.slNo + " : *"+option.description+"*\n\n";
             });
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
             },user.lang!='ENGLISH')
@@ -199,12 +199,12 @@ router.post('/messages',async (req, res) => {
             let stateData=await util.getStateData(menu.options[choice-1].description);
             let stateName = menu.options[choice-1].description;
             if(stateData.data.stateData.total==0)
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:"Not a single case in this state.\n\nStill be Safe and be at Home"
             },user.lang!='ENGLISH')
             else
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:Message.stateToMessage(menu.options[choice-1].description,stateData)
             },user.lang!='ENGLISH');
@@ -216,7 +216,7 @@ router.post('/messages',async (req, res) => {
                 replyMsg += option.slNo + " : *"+option.description+"*\n\n";
               });
               replyMsg += "Send Reply witn any option number....";
-              await ChatApi.sendmsg({
+               ChatApi.sendmsg({
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
@@ -231,7 +231,7 @@ router.post('/messages',async (req, res) => {
               replyMsg += option.slNo + " : *"+option.description+"*\n\n";
             });
             replyMsg += "Send Reply witn any option number....";
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
             },user.lang!='ENGLISH')
@@ -245,12 +245,12 @@ router.post('/messages',async (req, res) => {
                 let districtName = districtMenu.options[choice-1].description;
                 let districtData =await District.getDistrictByName(districtName,stateName);
                 if(!districtData|| districtData.confirmedCases==0)
-                await ChatApi.sendmsg({
+                 ChatApi.sendmsg({
                   phone:user.number,
                   body:"Not a single case in this District.\n\nStill be Safe and be at Home"
                 },user.lang!='ENGLISH')
                 else
-                await ChatApi.sendmsg({
+                 ChatApi.sendmsg({
                   phone:user.number,
                   body:Message.DistrictToMessage(districtData)
                 },user.lang!='ENGLISH');
@@ -263,7 +263,7 @@ router.post('/messages',async (req, res) => {
                   replyMsg += option.slNo + " : *"+option.description+"*\n\n";
                 });
                 replyMsg += "Send Reply witn any option number....";
-                await ChatApi.sendmsg({
+                 ChatApi.sendmsg({
                   phone:user.number,
                   body:replyMsg
                 },user.lang!='ENGLISH')
@@ -271,19 +271,44 @@ router.post('/messages',async (req, res) => {
 
           }else{
             let replyMsg = "No data available";
-            await ChatApi.sendmsg({
+            ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
             },user.lang!='ENGLISH');
             let updateUser=await User.setLastServedMenuName(user.number,"");
           }
           
-        }else{
+        }else if(menuName=='langMenu'){
+          if(recvMsg==1){
+            user=await User.setLang(user.number,"ENGLISH");
+            replyMsg = "Language changed to ENGLISH";
+               ChatApi.sendmsg({
+                phone:user.number,
+                body:replyMsg
+              },user.lang!='ENGLISH')
+          }
+          else if(recvMsg==2){
+            user=await User.setLang(user.number,"HINDI");
+            replyMsg = "Language changed to HINDI";
+               ChatApi.sendmsg({
+                phone:user.number,
+                body:replyMsg
+              },user.lang!='ENGLISH')
+          }
+          else{
+            replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
+               ChatApi.sendmsg({
+                phone:user.number,
+                body:replyMsg
+              },user.lang!='ENGLISH')
+          }
+        }
+        else{
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
           menu.options.forEach(option => {
             replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
-          await ChatApi.sendmsg({
+           ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
           },user.lang!='ENGLISH')
@@ -294,7 +319,7 @@ router.post('/messages',async (req, res) => {
       else{
         if(user.lastServedMenuName == "feedback") {
           let savefb = await Feedback.saveOrUpdateFeedback(user.number,recvMsg);
-          await ChatApi.sendmsg({
+           ChatApi.sendmsg({
             phone:user.number,
             body:"Your Feedback: "+recvMsg+"\n\n*Thanks for your valuable feedback :)*"
           },user.lang!='ENGLISH')
@@ -324,7 +349,7 @@ router.post('/messages',async (req, res) => {
               }
             }
             replyMsg+="*For more information follow the menu.*"
-            await ChatApi.sendmsg({
+             ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
             },user.lang!='ENGLISH');
@@ -334,7 +359,7 @@ router.post('/messages',async (req, res) => {
           menu.options.forEach(option => {
             replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
-          await ChatApi.sendmsg({
+           ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
           },user.lang!='ENGLISH')
