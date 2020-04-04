@@ -62,7 +62,16 @@ exports.sendmsg=async (msg,change)=>{
 exports.sendToAll=async (message)=>{
     try{
         let users=await User.find(),i=0;
-        let hindimsg=await trans(message);
+
+        let hindimsg=message;
+        try{
+            let bb=await trans(message);
+            hindimsg=bb;
+        }
+        catch(e){
+            console.log(e)
+            hindimsg+='\n\nSorry our translator is not working.We will fix it soon.';
+        }
         while(i<users.length){
             let user=users[i],msg={body:message}
             if(user.lang!='ENGLISH')
