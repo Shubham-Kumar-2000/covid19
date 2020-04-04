@@ -23,6 +23,7 @@ exports.sendmsg=async (msg,change)=>{
                 if(text[i]!=""||text[i]!=" ")
                 text[i]=await translate(text[i], { to: "hi" });
                 console.log(text[i])
+                i+=1;
             }
             msg.body=text.join('\n');
         }
