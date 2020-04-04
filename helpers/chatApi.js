@@ -18,8 +18,11 @@ exports.sendmsg=async (msg,change)=>{
         if(change){
             let text=msg.body.split('\n');
             let i=0;
+            console.log(text)
             while(i<text.length){
+                if(text[i]!=""||text[i]!=" ")
                 text[i]=await translate(text[i], { to: "hi" });
+                console.log(text[i])
             }
             msg.body=text.join('\n');
         }
