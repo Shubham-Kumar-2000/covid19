@@ -8,6 +8,7 @@ const Message=require('../helpers/messge')
 const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
 const District  = require('../Models/district');
 const State  = require('../Models/state');
+const Feedback  = require('../Models/feedback');
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
@@ -148,13 +149,17 @@ router.post('/messages',async (req, res) => {
             })
             let updateUser=await User.setLastServedMenuName(user.number,"stateMenu");
           }
-          else if(choice == 2 || choice == 3){
+          else if(choice >= 2 && choice <= 5){
             let menu= await Menu.findOne({name:"baseMenu"})
+            if(choice == 4) {
+              // Translate and store
+              User.setLang(user.number,"HINDI");
+            }
             await ChatApi.sendmsg({
               phone:user.number,
               body:menu.options[choice-1].output.split(';').join('\n')
             })
-            let updateUser=await User.setLastServedMenuName(user.number,"");
+            let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");
           }
           else{
             let menu= await Menu.findOne({name:"baseMenu"})
@@ -165,7 +170,6 @@ router.post('/messages',async (req, res) => {
               phone:user.number,
               body:replyMsg
             })
-            let updateUser=await User.setLastServedMenuName(user.number,"baseMenu");
           }
         }
         else if(menuName == "stateMenu") {
@@ -268,6 +272,15 @@ router.post('/messages',async (req, res) => {
         }
       }
       else{
+        if(await getLastServedMenuName(user.number) == "feedback") {
+          let savefb = await Feedback.saveOrUpdateFeedback(user.number,recvMsg);
+          await ChatApi.sendmsg({
+            phone:user.number,
+            body:"Your Feedback: "+recvMsg+"\n\n*Thanks for your valuable feedback :)*"
+          })
+          let updateUser=await User.setLastServedMenuName(user.number,"");
+        }
+        else {
           let states=await State.search(recvMsg);
           let districts=await District.search(recvMsg);
           if(states.length!=0||districts.length!=0){
@@ -307,6 +320,7 @@ router.post('/messages',async (req, res) => {
           })
           let updateUser=await User.setLastServedMenuName(user.number,(menuName == "" ? "baseMenu" : menuName));
         }
+      }
       }
       i+=1
     }
