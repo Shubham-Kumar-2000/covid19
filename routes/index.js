@@ -282,21 +282,21 @@ router.post('/messages',async (req, res) => {
         }else if(menuName=='langMenu'){
           if(recvMsg==1){
             user=await User.setLang(user.number,"ENGLISH");
-            replyMsg = "Language changed to ENGLISH";
+            replyMsg = "Language changed to english";
                ChatApi.sendmsg({
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
-              let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
+              let updateUser=await User.setLastServedMenuName(user.number,"");
           }
           else if(recvMsg==2){
             user=await User.setLang(user.number,"HINDI");
-            replyMsg = "Language changed to HINDI";
+            replyMsg = "Language changed to hindi";
                ChatApi.sendmsg({
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
-              let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
+              let updateUser=await User.setLastServedMenuName(user.number,"");
           }
           else{
             replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
