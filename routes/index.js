@@ -175,11 +175,12 @@ router.post('/messages',async (req, res) => {
               let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
               
             }
+            else{
              ChatApi.sendmsg({
               phone:user.number,
               body:menu.options[choice-1].output.split(';').join('\n')
             },user.lang!='ENGLISH')
-            let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");
+            let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");}
           }
           else{
             let menu= await Menu.findOne({name:"baseMenu"})
