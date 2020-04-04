@@ -25,8 +25,11 @@ exports.sendmsg=async (msg,change)=>{
                     let j=0;
                     while(j<text[i].length){
                         if(text[i][j]!=""||text[i][j]!=" "){
-                        text[i][j]=await translate(text[i][j], { to: "hi" });
-                        text[i][j]=text[i][j].text;}
+                            text[i][j]=await translate(text[i][j], { to: "hi" });
+                            text[i][j]=text[i][j].text;
+                            if(j%2==0)
+                            text[i][j]+=' ';
+                        }
                         j+=1;
                     }
                     text[i]=text[i].join('*');

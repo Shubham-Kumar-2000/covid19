@@ -142,7 +142,7 @@ router.post('/messages',async (req, res) => {
         if(menuName==""){
           let menu= await Menu.findOne({name:"baseMenu"})
           menu.options.forEach(option => {
-            replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+            replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
           await ChatApi.sendmsg({
             phone:user.number,
@@ -155,7 +155,7 @@ router.post('/messages',async (req, res) => {
           if(choice==1){
             let menu= await Menu.findOne({name:"stateMenu"});
             menu.options.forEach(option => {
-              replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+              replyMsg += option.slNo + " : *"+option.description+"*\n\n";
             });
             replyMsg += "Send Reply witn any option number....";
             await ChatApi.sendmsg({
@@ -184,7 +184,7 @@ router.post('/messages',async (req, res) => {
           else{
             let menu= await Menu.findOne({name:"baseMenu"})
             menu.options.forEach(option => {
-              replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+              replyMsg += option.slNo + " : *"+option.description+"*\n\n";
             });
             await ChatApi.sendmsg({
               phone:user.number,
@@ -213,7 +213,7 @@ router.post('/messages',async (req, res) => {
             if(menu2){
               replyMsg = `We are having information about these districts under the *${stateName}* state\n\n`;
               menu2.options.forEach(option => {
-                replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+                replyMsg += option.slNo + " : *"+option.description+"*\n\n";
               });
               replyMsg += "Send Reply witn any option number....";
               await ChatApi.sendmsg({
@@ -228,7 +228,7 @@ router.post('/messages',async (req, res) => {
           }
           else{
             menu.options.forEach(option => {
-              replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+              replyMsg += option.slNo + " : *"+option.description+"*\n\n";
             });
             replyMsg += "Send Reply witn any option number....";
             await ChatApi.sendmsg({
@@ -260,7 +260,7 @@ router.post('/messages',async (req, res) => {
                 let menu2= await Menu.findOne({name:"districtMenu@"+stateName});
                 replyMsg = `Selecet valid choice\nDistricts under the *${stateName}* state\n`;
                 menu2.options.forEach(option => {
-                  replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+                  replyMsg += option.slNo + " : *"+option.description+"*\n\n";
                 });
                 replyMsg += "Send Reply witn any option number....";
                 await ChatApi.sendmsg({
@@ -281,7 +281,7 @@ router.post('/messages',async (req, res) => {
         }else{
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
           menu.options.forEach(option => {
-            replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+            replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
           await ChatApi.sendmsg({
             phone:user.number,
@@ -332,7 +332,7 @@ router.post('/messages',async (req, res) => {
         let menuName=user.lastServedMenuName;
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
           menu.options.forEach(option => {
-            replyMsg += option.slNo + ": *"+option.description+"*\n\n";
+            replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
           await ChatApi.sendmsg({
             phone:user.number,
