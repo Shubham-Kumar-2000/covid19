@@ -287,6 +287,7 @@ router.post('/messages',async (req, res) => {
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
           }
           else if(recvMsg==2){
             user=await User.setLang(user.number,"HINDI");
@@ -295,6 +296,7 @@ router.post('/messages',async (req, res) => {
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
           }
           else{
             replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
