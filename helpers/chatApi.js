@@ -16,7 +16,12 @@ exports.sendmsg=async (msg,change)=>{
         if(!(process.env.CHAT_API_INSTANCE&&process.env.CHAT_API_TOKEN))
         throw "Enviroment Variables Not set"
         if(change){
-            msg.body=await translate(msg.body, { to: "hi" });
+            let text=msg.body.split('\n');
+            let i=0;
+            while(i<text.length){
+                text[i]=await translate(text[i], { to: "hi" });
+            }
+            msg.body=text.join('\n');
         }
         let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
         console.log(sentMessage)

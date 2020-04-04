@@ -91,7 +91,7 @@ router.post('/messages',async (req, res) => {
       if(recvMsg.length==1){
         hindiZero=recvMsg.charCodeAt(0)-hindiZero.charCodeAt(0);
         if(hindiZero>=0&&hindiZero<=9)
-        recvMsg=hindiZero;
+        recvMsg=String(hindiZero);
       }
       if(recvMsg.length==2){
         let temporary,temporary1;
