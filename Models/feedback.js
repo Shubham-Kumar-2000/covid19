@@ -13,15 +13,10 @@ const feedbackSchema =new Schema({
 },{timestamps:true});
 
 feedbackSchema.statics.saveOrUpdateFeedback=(num,feedbackMessage)=>{
-    Feedback.findOne({number: num},(err, feed) => {
-        if(feed)
-            feed.message = feedbackMessage;
-        else
-            feed = new Feedback({number: num, message: feedbackMessage});
-        return feed.save()
-    });
+    let feed = new Feedback({number: num, message: feedbackMessage});
+    return feed.save()
 }
 feedbackSchema.statics.all=()=>{
     return Feedback.find()
 }
-const User=module.exports = mongoose.model('Feedback', feedbackSchema);
+const Feedback =module.exports = mongoose.model('Feedback', feedbackSchema);

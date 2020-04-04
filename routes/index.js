@@ -9,6 +9,7 @@ const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWIL
 const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
+var { translate } = require("google-translate-api-browser");
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
@@ -84,7 +85,8 @@ router.post('/messages',async (req, res) => {
       if(message.fromMe)
       {i+=1;continue;}
       let fromNum=message.chatId.split("@")[0];
-      let recvMsg=message.body;
+      let recvMsg=await translate(message.body, { to: "en" });
+      recvMsg=recvMsg.text;
       let replyMsg="";
       let user=await User.findOne({number:fromNum})
       if(!(user))
@@ -153,7 +155,7 @@ router.post('/messages',async (req, res) => {
             let menu= await Menu.findOne({name:"baseMenu"})
             if(choice == 4) {
               // Translate and store
-              User.setLang(user.number,"HINDI");
+              await User.setLang(user.number,"HINDI");
             }
             await ChatApi.sendmsg({
               phone:user.number,
@@ -272,7 +274,7 @@ router.post('/messages',async (req, res) => {
         }
       }
       else{
-        if(await getLastServedMenuName(user.number) == "feedback") {
+        if(user.lastServedMenuName == "feedback") {
           let savefb = await Feedback.saveOrUpdateFeedback(user.number,recvMsg);
           await ChatApi.sendmsg({
             phone:user.number,
