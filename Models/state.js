@@ -35,25 +35,24 @@ stateSchema.statics.search = function(text){
     let txt=text.split(" ")
     var result = [];
 
-    var loop = function (start,depth,prefix)
+    var loop = function (start)
     {
+        let prefix='';
         for(var i=start; i<txt.length; i++)
         {
             var next;
             if(prefix&&prefix!='')
-            next = prefix+' '+txt[i];
+            {next = prefix+' '+txt[i];prefix+=(" "+txt[i]);}
             else
-            next = prefix+txt[i];
-            if (depth > 0)
-                loop(i+1,depth-1,next);
-            else
-                result.push(next);
+            {next =txt[i];prefix=txt[i];
+            }
+            result.push(next);
         }
     }
-
+    
     for(var i=0; i<txt.length; i++)
     {
-        loop(0,i,'');
+        loop(i);
     }
     let temp;
     txt=result;
