@@ -22,6 +22,7 @@ exports.sendmsg=async (msg,change)=>{
             while(i<text.length){
                 if(text[i]!=""||text[i]!=" ")
                 text[i]=await translate(text[i], { to: "hi" });
+                text[i]=text[i].text;
                 console.log(text[i])
                 i+=1;
             }
