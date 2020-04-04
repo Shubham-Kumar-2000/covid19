@@ -11,7 +11,6 @@ var { translate } = require("google-translate-api-browser");
 async function trans(text){
     text=text.split('\n');
     let i=0;
-    console.log(text)
     while(i<text.length){
         if(text[i]!=""||text[i]!=" "){
             text[i]=text[i].split('*');
@@ -21,7 +20,7 @@ async function trans(text){
                     text[i][j]=await translate(text[i][j], { to: "hi" });
                     text[i][j]=text[i][j].text;
                     if(j%2==0)
-                    text[i][j]+=' ';
+                    text[i][j]=' '+text[i][j]+' ';
                 }
                 j+=1;
             }
