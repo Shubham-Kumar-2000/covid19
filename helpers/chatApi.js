@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 var  translate  = require("translate");
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
-translate.from = 'hi';
+translate.from = 'en';
 /*{
     "chatId": "hjvj",
     "phone": 919748669897,
@@ -17,11 +17,9 @@ async function trans(text){
         if(text[i]!=""||text[i]!=" "){
             text[i]=text[i].split('*');
             let j=0;
-            console.log(text[i])
             while(j<text[i].length){
                 if((text[i][j])&&(text[i][j]!=""&&text[i][j]!=" ")){
-                    console.log(text[i][j])
-                    text[i][j]=await translate(text[i][j], { to: "en" });
+                    text[i][j]=await translate(text[i][j], { to: "hi" });
                     //text[i][j]=text[i][j].text;
                     if(j%2==0)
                     text[i][j]=' '+text[i][j]+' ';
