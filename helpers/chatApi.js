@@ -17,8 +17,9 @@ async function trans(text){
         if(text[i]!=""||text[i]!=" "){
             text[i]=text[i].split('*');
             let j=0;
+            console.log(text[i])
             while(j<text[i].length){
-                if(text[i][j]!=""||text[i][j]!=" "){
+                if((text[i][j])&&(text[i][j]!=""&&text[i][j]!=" ")){
                     console.log(text[i][j])
                     text[i][j]=await translate(text[i][j], { to: "en" });
                     //text[i][j]=text[i][j].text;
