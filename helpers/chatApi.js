@@ -14,20 +14,9 @@ async function trans(text){
     text=text.split('\n');
     let i=0;
     while(i<text.length){
-        if(text[i]!=""||text[i]!=" "){
-            text[i]=text[i].split('*');
-            let j=0;
-            while(j<text[i].length){
-                if((text[i][j])&&(text[i][j]!=""&&text[i][j]!=" ")){
-                    text[i][j]=await translate(text[i][j],{to:"hi",from:'en'});
-                    console.log(text[i][j])
-                    //text[i][j]=text[i][j].text;
-                    if(j%2==0)
-                    text[i][j]=' '+text[i][j]+' ';
-                }
-                j+=1;
-            }
-            text[i]=text[i].join('*');
+        if(text[i]!=""&&text[i]!=" "){
+            text[i]=text[i].split('*').join('');
+            text[i]=await translate(text[i],{to:"hi",from:'en'});
         }
         i+=1;
     }
