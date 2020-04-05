@@ -80,7 +80,7 @@ router.post('/messages',async (req, res) => {
       if(isNaN(recvMsg))
       { 
         try{
-        recvMsg=await translate(message.body, { to: "en" });
+        recvMsg=await translate(message.body,"en");
         //recvMsg=recvMsg.text;
         }
         catch(e){
