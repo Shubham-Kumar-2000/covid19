@@ -9,7 +9,10 @@ const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWIL
 const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
-var  translate = require("translate-api");
+var  translate = require("translate");
+translate.engine = 'yandex';
+translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
+translate.from = 'hi';
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
@@ -77,7 +80,7 @@ router.post('/messages',async (req, res) => {
       if(isNaN(recvMsg))
       { 
         try{
-        recvMsg=await translate.getText(message.body, { to: "en" });
+        recvMsg=await translate(message.body, { to: "en" });
         //recvMsg=recvMsg.text;
         }
         catch(e){

@@ -1,8 +1,10 @@
 const User  = require('../Models/users');
 const request=require('request-promise')
 const fetch = require("node-fetch");
-var  translate  = require("translate-api");
-
+var  translate  = require("translate");
+translate.engine = 'yandex';
+translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
+translate.from = 'hi';
 /*{
     "chatId": "hjvj",
     "phone": 919748669897,
@@ -17,7 +19,7 @@ async function trans(text){
             let j=0;
             while(j<text[i].length){
                 if(text[i][j]!=""||text[i][j]!=" "){
-                    text[i][j]=await translate.getText(text[i][j], { to: "hi" });
+                    text[i][j]=await translate(text[i][j], { to: "en" });
                     //text[i][j]=text[i][j].text;
                     if(j%2==0)
                     text[i][j]=' '+text[i][j]+' ';
