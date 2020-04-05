@@ -77,7 +77,14 @@ router.post('/messages',async (req, res) => {
       {i+=1;continue;}
       let fromNum=message.chatId.split("@")[0];
       let recvMsg=message.body;
-      if(isNaN(recvMsg))
+      let replyMsg="";
+      let user=await User.findOne({number:fromNum})
+      if(!(user))
+      {
+        user=new User({number:fromNum});
+        await user.save()
+      }
+      if(isNaN(recvMsg)&&(user.lang!='ENGLISH'))
       { 
         try{
         recvMsg=await translate(message.body,"en");
@@ -100,13 +107,6 @@ router.post('/messages',async (req, res) => {
         temporary1=recvMsg.charCodeAt(1)-hindiZero.charCodeAt(0);
         if((temporary>=0&&temporary<=9)&&(temporary1>=0&&temporary1<=9))
         recvMsg=String(temporary)+String(temporary1);
-      }
-      let replyMsg="";
-      let user=await User.findOne({number:fromNum})
-      if(!(user))
-      {
-        user=new User({number:fromNum});
-        await user.save()
       }
       if(user.isAdmin){
         let command = recvMsg.split(':');
