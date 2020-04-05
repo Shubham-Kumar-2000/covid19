@@ -20,6 +20,7 @@ async function trans(text){
             while(j<text[i].length){
                 if((text[i][j])&&(text[i][j]!=""&&text[i][j]!=" ")){
                     text[i][j]=await translate(text[i][j], { to: "hi" });
+                    console.log(text[i][j])
                     //text[i][j]=text[i][j].text;
                     if(j%2==0)
                     text[i][j]=' '+text[i][j]+' ';
