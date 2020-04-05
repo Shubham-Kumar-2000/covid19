@@ -17,6 +17,6 @@ feedbackSchema.statics.saveOrUpdateFeedback=(num,feedbackMessage)=>{
     return feed.save()
 }
 feedbackSchema.statics.all=()=>{
-    return Feedback.find()
+    return Feedback.find().sort( { updatedAt: -1 } )
 }
 const Feedback =module.exports = mongoose.model('Feedback', feedbackSchema);

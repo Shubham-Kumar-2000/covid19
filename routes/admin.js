@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var util=require('../helpers/utils');
+const User  = require('../Models/users');
+const Feedback  = require('../Models/feedback');
 const Menu = require('../Models/menu');
 /* GET users listing. */
 router.post('/addMenu', function(req, res, next) {
@@ -52,6 +53,28 @@ router.get('/getMenu/:menuName', function(req, res, next) {
             });
         }
     })
+});
+
+router.get('/total',async (req, res) => {
+    try{
+    let users=await User.all();
+    res.status(200).json({err:false,users:users.length})
+    }
+    catch(e){
+      console.log(e)
+      res.status(200).json({err:true,msg:e})
+    }
+});
+
+router.get('/feedback',async (req, res) => {
+    try{
+    let feedback = await Feedback.all();
+    res.status(200).json({err:false,feedback:feedback})
+    }
+    catch(e){
+      console.log(e)
+      res.status(200).json({err:true,msg:e})
+    }
 });
 
 module.exports = router;

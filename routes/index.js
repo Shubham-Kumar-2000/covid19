@@ -42,26 +42,14 @@ router.post('/createmenu', (req, res) => {
   ]
 }*/
 router.get('/date',async (req, res) => {
+  res.status(200).json({date:require('../helpers/messge').starting()})
+});
 
-res.status(200).json({date:require('../helpers/messge').starting()})
-}
-)
 router.get('/sendMessages',async (req, res) => {
   res.status(200).json({s:'s'})
   util.getUpdates()
-}
-)
-router.get('/total',async (req, res) => {
-  try{
-  let users=await User.all();
-  res.status(200).json({err:false,users:users.length})
-  }
-  catch(e){
-    console.log(e)
-    res.status(200).json({err:true,msg:e})
-  }
-}
-)
+});
+
 router.post('/search',async (req, res) => {
   try{
   let states=await State.search(req.body.text);
@@ -73,8 +61,8 @@ router.post('/search',async (req, res) => {
     console.log(e)
     res.status(200).json({err:true,msg:e})
   }
-}
-)
+});
+
 router.post('/messages',async (req, res) => {
   try{
     let msgs=req.body.messages,i=0;

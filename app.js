@@ -6,7 +6,6 @@ const logger = require('morgan');
 const dotenv = require('dotenv');
 dotenv.config();
 const index = require('./routes/index');
-const users = require('./routes/users');
 const messaging = require('./routes/messaging');
 const adminRouter  =require('./routes/admin');
 
@@ -23,7 +22,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/users', users);
 app.use('/messaging', messaging);
 app.use('/admin', adminRouter);
 app.use('/', index);
