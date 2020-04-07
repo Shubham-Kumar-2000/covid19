@@ -58,7 +58,7 @@ if(process.env.CLUSTER === 'yes') {
     })
     let sendUpdate=schedule.scheduleJob('0 8 * * *',async function(){
       try{
-        await Utills.sendUpdate()
+        //await Utills.sendUpdate()
       }catch(e){
         console.log(e)
       }
