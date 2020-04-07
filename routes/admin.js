@@ -3,6 +3,8 @@ var router = express.Router();
 const User  = require('../Models/users');
 const Feedback  = require('../Models/feedback');
 const Menu = require('../Models/menu');
+const ChatApi= require('../helpers/chatApi')
+const Country =  require('../Models/country');
 /* GET users listing. */
 router.post('/addMenu', function(req, res, next) {
     Menu.findOne({$or:[{name: req.body.menu.name},{command:req.body.menu.command}]},(err,menu)=>{
@@ -57,8 +59,8 @@ router.get('/getMenu/:menuName', function(req, res, next) {
 
 router.get('/total',async (req, res) => {
     try{
-    let users=await User.all();
-    res.status(200).json({err:false,users:users.length})
+    let users=await User.allSorted();
+    res.status(200).json({err:false,users:users})
     }
     catch(e){
       console.log(e)

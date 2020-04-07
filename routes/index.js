@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var util=require('../helpers/utils');
+const fetch = require("node-fetch");
 const Menu =  require('../Models/menu');
+const News =  require('../Models/news');
 const User  = require('../Models/users');
 const ChatApi= require('../helpers/chatApi')
 const Message=require('../helpers/messge')
@@ -10,6 +12,7 @@ const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
 const India = require('../Models/india')
+const Country=require('../Models/country')
 var  translate = require("translate");
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
@@ -183,6 +186,7 @@ router.post('/messages',async (req, res) => {
           menu.options.forEach(option => {
             replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
+          replyMsg += "Send Reply witn any option number....";
            ChatApi.sendmsg({
             phone:user.number,
             body:replyMsg
@@ -191,7 +195,7 @@ router.post('/messages',async (req, res) => {
         }
         else if(menuName == "baseMenu"){
           let choice = parseInt(recvMsg);
-          if(choice==1){
+          if(choice==2){
             let menu= await Menu.findOne({name:"stateMenu"});
             menu.options.forEach(option => {
               replyMsg += option.slNo + " : *"+option.description+"*\n\n";
@@ -203,23 +207,47 @@ router.post('/messages',async (req, res) => {
             },user.lang!='ENGLISH')
             let updateUser=await User.setLastServedMenuName(user.number,"stateMenu");
           }
-          else if(choice >= 2 && choice <= 5){
+          if(choice==1){
+            replyMsg = "Reply with Country Name. [If not getting it right, find country names here, copy the one you wish to query and send it: ";
+             ChatApi.sendmsg({
+              phone:user.number,
+              body:replyMsg
+            },user.lang!='ENGLISH')
+            let updateUser=await User.setLastServedMenuName(user.number,"countryMenu");
+          }
+          else if(choice >= 3 && choice <= 7){
             let menu= await Menu.findOne({name:"baseMenu"})
-            if(choice == 4) {
+            if(choice == 6) {
               replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
                ChatApi.sendmsg({
                 phone:user.number,
                 body:replyMsg
               },user.lang!='ENGLISH')
               let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
-              
+            }
+            else if(choice == 5) {
+              let news = News.getAllNews();
+              let min = Math.ceil(0);
+              let max = Math.floor(news.length-2);
+              let num = Math.floor(Math.random() * (max - min + 1)) + min;
+              let sendNews = news.slice(num,num+2);
+              let message = "";
+              for(i=0;i<sendNews.length;i++)
+                message += sendNews[i].message + "\n\n"
+              message = message.trim();
+              ChatApi.sendmsg({
+                phone:user.number,
+                body:message
+              },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,"");
             }
             else{
              ChatApi.sendmsg({
               phone:user.number,
               body:menu.options[choice-1].output.split(';').join('\n')
             },user.lang!='ENGLISH')
-            let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");}
+            let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");
+          }
           }
           else{
             let menu= await Menu.findOne({name:"baseMenu"})
@@ -276,7 +304,7 @@ router.post('/messages',async (req, res) => {
               body:replyMsg
             },user.lang!='ENGLISH')
           }
-        }else if(menuName.indexOf('districtMenu@') !=-1) {
+        } else if(menuName.indexOf('districtMenu@') !=-1) {
           let districtMenu =await Menu.findOne({'name':menuName});
           if(districtMenu){
               let stateName = menuName.split('@')[1];
@@ -366,6 +394,27 @@ router.post('/messages',async (req, res) => {
             body:"Your Feedback: "+recvMsg+"\n\n*Thanks for your valuable feedback :)*"
           },user.lang!='ENGLISH')
           let updateUser=await User.setLastServedMenuName(user.number,"");
+        } else if (user.lastServedMenuName == "countryMenu") {
+          let countries = await Country.all();
+          let found = false;
+          for(i=0;i<countries.length;i++)
+              if(recvMsg.toLocaleLowerCase() == countries[i].name.toLocaleLowerCase()) {
+                found = true;  
+                let countryData=await Country.getCountry(menu.options[choice-1].description);
+                await ChatApi.sendmsg({
+                 phone:user.number,
+                 body:Message.countryToMessage(countryData)
+               },user.lang!='ENGLISH');        
+               let updateUser=await User.setLastServedMenuName(user.number,"");  
+              break
+            }
+          if(!found){
+            replyMsg = "No such country found!!! Reply with valid Country Name. [If not getting it right, find country names here, copy the one you wish to query and send it: ";
+             ChatApi.sendmsg({
+              phone:user.number,
+              body:replyMsg
+            },user.lang!='ENGLISH')
+          }
         }
         else {
           let states=await State.search(recvMsg);
@@ -418,6 +467,19 @@ router.post('/messages',async (req, res) => {
     res.status(200).json({err:false})
   }
 });
+
+let getAllStateDataAtOnce = async () => {
+  let stateData = await fetch('https://api.rootnet.in/covid19-in/unofficial/covid19india.org/statewise').then(result=>{return result.json()})
+  let message = "The numbers displayed below follows the format *Confirmed* - *Recovered* - *Deaths* - *Active* cases respectively.";
+  let statewise = stateData.data.statewise;
+  statewise.sort((a, b) => {
+      return b.confirmed - a.confirmed;
+    })
+  for(i=0;i<statewise.length;i++)
+    message += "\n\n"+statewise[i].state+":\n*"+statewise[i].confirmed+"* | *"+statewise[i].recovered+"* | *"+statewise[i].deaths+"* | *"+statewise[i].active+"*"
+  return message
+}
+
 const registerNewUser = (number)=>{
   let def = new Promise((resolve,reject)=>{
     User.findOne({number:number},(err,userT)=>{
