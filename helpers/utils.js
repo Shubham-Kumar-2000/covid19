@@ -7,8 +7,14 @@ const request=require('request-promise')
 const StateMethods = require('../Models/stateMethods');
 const ChatApi=require('./chatApi')
 const District=require('../Models/district')
-const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
 const Menu=require('../Models/menu')
+const News=require('../Models/news')
+const Country=require('../Models/country')
+const NewsAPI = require('newsapi');
+
+const NewsFetch = new NewsAPI(process.env.NEWS_API_KEY);
+
+
 function check(arr,nn) {
     let i=0;
     while(i<arr.length){
@@ -80,114 +86,30 @@ exports.getStateData  =async (state)=>{
     }
 }
 
-let updateAllStates = (stateNames,states)=>{
-
-    let promises = [];
-    stateNames.forEach(stateName=>{
-        let def = new Promise((resolve,reject)=>{
-            StateMethods.getStateByName(stateName).then(res1 => {
-                if(!res1.status)
-                    reject(res1);
-                currState = res1.data;
-                if(!currState)
-                {
-                    StateMethods.addNew(stateName).then(res2 => {
-                        if(!res2.status)
-                            reject(res2);
-                        currState = res2.data;
-                        if(currState.lastRecorded!=states[stateName]){
-                            this.getStateDataNew(stateName).then(res3 => {
-                                StateMethods.updateState(stateName,states[stateName]).then(res4 => {
-                                    if(res4.status)
-                                        resolve({
-                                            status: true,
-                                            message: Message.stateToMessage(stateName,res3,true,states[stateName]-state.lastRecorded),
-                                            updated: true,
-                                            block: 'A1'
-                                        });
-                                    else
-                                        reject({
-                                            status: false,
-                                            message: "",
-                                            updated: false,
-                                            block: 'A2'
-                                        });
-                                    }).catch(err4=>{
-                                        reject({
-                                            status: false,
-                                            message: JSON.stringify(err4),
-                                            updated: false,
-                                            block: 'A3'
-                                        });
-                                    });
-                                    
-                                }).catch(err3=>{
-                                    reject({
-                                        status: false,
-                                        message: JSON.stringify(err3),
-                                        updated: false,
-                                        block: 'A4'
-                                    });
-                                });
-                        }
-                    }).catch(err2=>{
-                        reject({
-                            status: false,
-                            message: JSON.stringify(err2),
-                            updated: false,
-                            block: 'A5'
-                        });
-                });
+exports.updateDB = async() => {
+    try {
+        let getCountryWiseData = await fetch("https://corona-virus-world-and-india-data.p.rapidapi.com/api",{
+            method: "GET",
+            headers: {
+                "x-rapidapi-host": "corona-virus-world-and-india-data.p.rapidapi.com",
+                "x-rapidapi-key": "dfbd4c6c8emsh44fb005c1383413p149de7jsn24b4c0a1e948"
             }
-            else {
-                if(currState.lastRecorded!=states[stateName]){
-                    this.getStateDataNew(stateName).then(res3 => {
-                        StateMethods.updateState(stateName,states[stateName]).then(res4 => {
-                            if(res4.status)
-                                resolve({
-                                    status: true,
-                                    message: Message.stateToMessage(stateName,res3,true,states[stateName]-state.lastRecorded),
-                                    updated: true,
-                                    block: 'B1'
-                                });
-                            else
-                                reject({
-                                    status: false,
-                                    message: "",
-                                    updated: false,
-                                    block: 'B2'
-                                });
-                            }).catch(err4=>{
-                                reject({
-                                    status: false,
-                                    message: JSON.stringify(err4),
-                                    updated: false,
-                                    block: 'B3'
-                                });
-                            });
-                            
-                        }).catch(err3=>{
-                            reject({
-                                status: false,
-                                message: JSON.stringify(err3),
-                                updated: false,
-                                block: 'B4'
-                            });
-                        });
-                }
-            }
-            }).catch(err1=>{
-                reject({
-                    status: false,
-                    message: JSON.stringify(err1),
-                    updated: false,
-                    block: 'B5'
-                });
-            });
-        });
-        promises.push(def);
-    });
-    return promises;
+        }).then(result=>{return result.json()});
+        for(i=0;i<getCountryWiseData.countries_stat.length;i++) {
+            console.log(i,getCountryWiseData.countries_stat[i].country_name);
+            
+            await Country.saveOrUpdateCountry({
+                name: getCountryWiseData.countries_stat[i].country_name,
+                confirmed: getCountryWiseData.countries_stat[i].cases,
+                recovered: getCountryWiseData.countries_stat[i].total_recovered,
+                deaths: getCountryWiseData.countries_stat[i].deaths,
+                active: getCountryWiseData.countries_stat[i].active_cases
+            })
+        }
+    } catch (err) {
+        console.log(err);
+        
+    }
 }
 
 exports.getUpdates=async()=>{
@@ -246,10 +168,10 @@ exports.getUpdates=async()=>{
             }
             i+=1;
         };
-        console.log("from 1")
+        // console.log("from 1")
         if(message.length>0)
         {
-            console.log("from here")
+            // console.log("from here")
             message+=Message.ending(live.data.total)
             try{
                 ChatApi.sendToAll(message);
@@ -258,6 +180,24 @@ exports.getUpdates=async()=>{
             catch(e){
                 console.log(e)
                 return false
+            }
+        }
+        await this.updateDB();
+        let news = await NewsFetch.v2.topHeadlines({
+            category: 'health',
+            language: 'en',
+            country: 'in'
+          });
+        if(news.status && news.status == 'ok') {
+            let clearance = await News.deleteAll();
+            let count = process.env.NEWS_COUNT
+            for(let i=0;i<news.totalResults && count>=0;i++) {
+                try {
+                    let message = "*" + news.articles[i].title + "*\n" + news.articles[i].content.replace(/\[\+.*chars\]/g,"") + "\nMore Information:\n" + news.articles[i].url
+                    let store = await News.addNew({ message })
+                    count--;
+                } catch(err) {
+                }
             }
         }
     }

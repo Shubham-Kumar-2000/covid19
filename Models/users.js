@@ -29,4 +29,7 @@ userSchema.statics.setLastServedMenuName=(num,menuName)=>{
 userSchema.statics.all=()=>{
     return User.find()
 }
+userSchema.statics.allSorted=()=>{
+    return User.find().sort( { createdAt: -1 } )
+}
 const User=module.exports = mongoose.model('User', userSchema);

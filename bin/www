@@ -26,8 +26,20 @@ if(process.env.CLUSTER === 'yes') {
     let updates=schedule.scheduleJob('*/'+process.env.UPDATE_INTERVAL+' * * * *',async function(){
       //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
-         let message = await Utills.getUpdates() ? "Updated States Successfully !!!" : "Already Up-To Date...";
-         console.log(message1);
+         let message = await Utills.getUpdates()
+       //console.log(message+" Time now: ",new Date().toString());
+       }
+       catch(e){
+       //console.log(e)
+       }
+      /*Utills.getUpdates().then(data => {
+        //console.log("d",data);
+      }).catch(err=>{//console.log("e",err)});*/
+    })
+    let updates2=schedule.scheduleJob('*/0 */2 * * *',async function(){
+      //console.log("Checking for Update... Time now: ",new Date().toString())
+       try{
+         let message = await Utills.updateDB()
        //console.log(message+" Time now: ",new Date().toString());
        }
        catch(e){
