@@ -22,4 +22,7 @@ indiaSchema.statics.add=(con,rec,dead)=>{
 indiaSchema.statics.all=()=>{
     return India.find().sort( { updatedAt: -1 } ).limit(10)
 }
+indiaSchema.statics.recent=()=>{
+    return India.find().sort( { updatedAt: -1 } ).limit(1)
+}
 const India =module.exports = mongoose.model('india', indiaSchema);

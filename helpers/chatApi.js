@@ -84,3 +84,72 @@ exports.sendToAll=async (message)=>{
         return false
     }
 }
+
+/*{
+    "phone": 919748669897,
+    "body": "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg",
+    "filename": "chart.png",
+    "caption": "text"
+  }*/
+exports.sendFile=async (msg,change)=>{
+    if(process.env.MODE=='DEV'&&msg.phone!='919748669897'){
+        return true;
+    }
+    try{
+        if(!(process.env.CHAT_API_INSTANCE&&process.env.CHAT_API_TOKEN))
+        throw "Enviroment Variables Not set"
+        if(change){
+            try{
+                let bb=await trans(msg.caption);
+                msg.caption=bb;
+            }
+            catch(e){
+                console.log(e)
+                msg.caption+='\n\nSorry our translator is not working.We will fix it soon.';
+            }
+        }
+        let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
+        if(!(sentMessage.sent))
+        {
+            throw "An error from chatApi occured"
+        }
+        return true
+    }
+    catch(e){
+        console.log(e)
+        return false
+    }
+}
+exports.sendFileToAll=async (link,filename,caption)=>{
+    try{
+        let users=await User.find(),i=0;
+
+        let hindimsg=caption;
+        try{
+            let bb=await trans(caption);
+            hindimsg=bb;
+        }
+        catch(e){
+            console.log(e)
+            hindimsg+='\n\nSorry our translator is not working.We will fix it soon.';
+        }
+        while(i<users.length){
+            let user=users[i],msg={caption:caption,filename:filename,body:link}
+            if(user.lang!='ENGLISH')
+            msg.caption=hindimsg;
+            msg.phone=user.number;
+            this.sendmsg(msg,false).then(sent=>{
+                if(!sent)
+                console.log("Msg was not sent to : ",user.number)
+            }).catch(e=>{
+                console.log(e)
+            });
+            i+=1;
+        }
+        return true
+    }
+    catch(e){
+        console.log(e)
+        return false
+    }
+}

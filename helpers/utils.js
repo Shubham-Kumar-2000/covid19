@@ -11,8 +11,48 @@ const Menu=require('../Models/menu')
 const News=require('../Models/news')
 const Country=require('../Models/country')
 const NewsAPI = require('newsapi');
-
+const India=require('../Models/india')
 const NewsFetch = new NewsAPI(process.env.NEWS_API_KEY);
+const Nightmare = require('nightmare');
+const Config=require('../Models/Config')
+const path = require('path')
+exports.updateIndia=async()=>{
+    try{
+    let liveOfficialData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org/statewise").then(result=>{return result.json()})
+    let lastIndiaData=await Config.findOne({active:true});
+    await India.add(liveOfficialData.data.total.confirmed-lastIndiaData.con,liveOfficialData.data.total.recovered-lastIndiaData.rec,liveOfficialData.data.total.deaths-lastIndiaData.dead)
+    lastIndiaData.con=liveOfficialData.data.total.confirmed;
+    lastIndiaData.rec=liveOfficialData.data.total.recovered;
+    lastIndiaData.dead=liveOfficialData.data.total.deaths;
+    await lastIndiaData.save()
+    
+    
+    const urlToCapture = process.env.BASEURL+'/graph'; 
+    const outputFilePath = path.join(__dirname,"../public/chart.png");
+
+    const nightmare = new Nightmare(); // Create Nightmare instance.
+    nightmare.goto(urlToCapture) // Point the browser at the requested web page.
+        .wait("#shu") // Wait until the specified HTML element appears on the screen. 
+        .screenshot(outputFilePath) // Capture a screenshot to an image file.
+        .end() // End the Nightmare session. Any queued operations are completed and the headless browser is terminated.
+        .then(() => {
+            console.log("Done!");
+        })
+        .catch(err => {
+            console.error(err);
+        })
+    }
+    catch(e){
+        console.log(e)
+    }
+}
+exports.sendUpdate=async()=>{
+    try{
+        await ChatApi.sendFileToAll(process.env.BASEURL+'/chart.png',JSON.stringify(new Date()),'')
+    }catch(e){
+        console.log(e)
+    }
+}
 
 
 function check(arr,nn) {
@@ -182,7 +222,6 @@ exports.getUpdates=async()=>{
                 return false
             }
         }
-        await this.updateDB();
         let news = await NewsFetch.v2.topHeadlines({
             category: 'health',
             language: 'en',
@@ -206,6 +245,7 @@ exports.getUpdates=async()=>{
     }
     
 }
+
 
 
 exports.sendMessageToAll = (messageToSend)=>{

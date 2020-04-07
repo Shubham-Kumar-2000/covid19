@@ -36,18 +36,32 @@ if(process.env.CLUSTER === 'yes') {
         //console.log("d",data);
       }).catch(err=>{//console.log("e",err)});*/
     })
-    let updates2=schedule.scheduleJob('*/0 */2 * * *',async function(){
+    let updates2=schedule.scheduleJob('0 */2 * * *',async function(){
       //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
          let message = await Utills.updateDB()
        //console.log(message+" Time now: ",new Date().toString());
        }
        catch(e){
-       //console.log(e)
+       console.log(e)
        }
       /*Utills.getUpdates().then(data => {
         //console.log("d",data);
       }).catch(err=>{//console.log("e",err)});*/
+    })
+    let indiaUpdate=schedule.scheduleJob('0 0 * * *',async function(){
+      try{
+        await Utills.updateIndia()
+      }catch(e){
+        console.log(e)
+      }
+    })
+    let sendUpdate=schedule.scheduleJob('0 8 * * *',async function(){
+      try{
+        await Utills.sendUpdate()
+      }catch(e){
+        console.log(e)
+      }
     })
 		// Fork workers.
 		for (let i = 0; i < numCPUs; i++) {

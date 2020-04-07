@@ -13,12 +13,16 @@ const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
 const India = require('../Models/india')
 const Country=require('../Models/country')
+const Config=require('../Models/Config')
 var  translate = require("translate");
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
 translate.from = 'hi';
 var Plotlib = require('nodeplotlib');
-
+router.post('/createConfig',async(req, res) => {
+  let data=new Config({con:req.body.con,rec:req.body.rec,dead:req.body.dead})
+  res.send(await data.save())
+})
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
     return res.status(200).json({
@@ -72,26 +76,12 @@ router.post('/addDailyCases',async (req, res) => {
 });
 
 router.get('/show',async (req, res) => {
-  const Nightmare = require('nightmare');
-
-// This is the web page to capture.
-// It can also be a local web server! 
-// Or serve from the file system using file://
-const urlToCapture = process.env.BASEURL+'/graph'; 
-const outputFilePath = "your-chart-output-file.png";
-
-const nightmare = new Nightmare(); // Create Nightmare instance.
-nightmare.goto(urlToCapture) // Point the browser at the requested web page.
-        .wait("#shu") // Wait until the specified HTML element appears on the screen. 
-        .screenshot(__dirname+'/'+outputFilePath) // Capture a screenshot to an image file.
-        .end() // End the Nightmare session. Any queued operations are completed and the headless browser is terminated.
-        .then(() => {
-          res.sendFile(__dirname+'/'+"your-chart-output-file.png")
-            console.log("Done!");
-        })
-        .catch(err => {
-            console.error(err);
-        })
+  util.updateIndia().then(r=>{
+    res.send("Check /chart.png")
+  }).catch(e=>{
+    res.send("error occured")
+  }
+  )
 
 });
 router.post('/search',async (req, res) => {
