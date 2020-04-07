@@ -9,10 +9,12 @@ const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWIL
 const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
+const India = require('../Models/india')
 var  translate = require("translate");
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
 translate.from = 'hi';
+var Plotlib = require('nodeplotlib');
 
 router.post('/createmenu', (req, res) => {
   new Menu(req.body).save().then(menu => {
@@ -44,6 +46,10 @@ router.post('/createmenu', (req, res) => {
     }
   ]
 }*/
+router.get('/graph',async (req, res) => {
+  let data=await India.all()
+  res.render('index',{data:JSON.stringify(data)})
+});
 router.get('/date',async (req, res) => {
   res.status(200).json({date:require('../helpers/messge').starting()})
 });
@@ -52,7 +58,39 @@ router.get('/sendMessages',async (req, res) => {
   res.status(200).json({s:'s'})
   util.getUpdates()
 });
+router.post('/addDailyCases',async (req, res) => {
+  try{
+    let data=await India.add(req.body.con,req.body.rec,req.body.dead)
+    res.status(200).json({err:false,data:data})
+  }catch(e){
+    res.status(200).json({err:true,msg:e})
+  }
 
+});
+
+router.get('/show',async (req, res) => {
+  const Nightmare = require('nightmare');
+
+// This is the web page to capture.
+// It can also be a local web server! 
+// Or serve from the file system using file://
+const urlToCapture = process.env.BASEURL+'/graph'; 
+const outputFilePath = "your-chart-output-file.png";
+
+const nightmare = new Nightmare(); // Create Nightmare instance.
+nightmare.goto(urlToCapture) // Point the browser at the requested web page.
+        .wait("#shu") // Wait until the specified HTML element appears on the screen. 
+        .screenshot(__dirname+'/'+outputFilePath) // Capture a screenshot to an image file.
+        .end() // End the Nightmare session. Any queued operations are completed and the headless browser is terminated.
+        .then(() => {
+          res.sendFile(__dirname+'/'+"your-chart-output-file.png")
+            console.log("Done!");
+        })
+        .catch(err => {
+            console.error(err);
+        })
+
+});
 router.post('/search',async (req, res) => {
   try{
   let states=await State.search(req.body.text);
