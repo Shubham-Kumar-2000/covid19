@@ -79,7 +79,7 @@ router.post('/addDailyCases',async (req, res) => {
 const Nightmare = require('nightmare');
 const path = require('path')
 router.get('/updateGraph',async (req, res) => {
-  const urlToCapture = process.env.BASEURL+'/graph'; 
+  const urlToCapture = 'http://localhost:3000/graph'; 
     const outputFilePath = path.join(__dirname,"../public/chart.png");
     console.log(urlToCapture,outputFilePath)
 
