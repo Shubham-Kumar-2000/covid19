@@ -26,7 +26,7 @@ if(process.env.CLUSTER === 'yes') {
     let updates=schedule.scheduleJob('*/'+process.env.UPDATE_INTERVAL+' * * * *',async function(){
       //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
-         //let message = await Utills.getUpdates()
+         let message = await Utills.getUpdates()
        //console.log(message+" Time now: ",new Date().toString());
        }
        catch(e){
@@ -56,9 +56,9 @@ if(process.env.CLUSTER === 'yes') {
         console.log(e)
       }
     })
-    let sendUpdate=schedule.scheduleJob('0 8 * * *',async function(){
+    let sendUpdate=schedule.scheduleJob('*/10 * * * *',async function(){
       try{
-        //heroawait Utills.sendUpdate()
+        await Utills.sendUpdate()
       }catch(e){
         console.log(e)
       }
@@ -69,17 +69,17 @@ if(process.env.CLUSTER === 'yes') {
 		}
 
 		cluster.on('exit', (worker, code, signal) => {
-			// // //console.log(`worker ${worker.process.pid} died`);
+			console.log(`worker ${worker.process.pid} died`);
 	  });
 
 		return;
 	}
   // else it's a worker. continue.
-	// // //console.log(`Worker ${process.pid} started`);
+	console.log(`Worker ${process.pid} started`);
 
 }
 else {
-  // //console.log('Starting app in non-cluster mode. (To start in cluster mode, pass CLUSTER=yes in config file)');
+  console.log('Starting app in non-cluster mode. (To start in cluster mode, pass CLUSTER=yes in config file)');
 }
 
 

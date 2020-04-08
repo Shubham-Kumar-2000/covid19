@@ -53,7 +53,7 @@ exports.sendmsg=async (msg,change)=>{
 }
 exports.sendToAll=async (message)=>{
     try{
-        let users=await User.find(),i=0;
+        let users=await User.find({isAdmin:true}),i=0;
 
         let hindimsg=message;
         try{
@@ -108,7 +108,7 @@ exports.sendFile=async (msg,change)=>{
                 msg.caption+='\n\nSorry our translator is not working.We will fix it soon.';
             }
         }
-        let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
+        let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendFile?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
         if(!(sentMessage.sent))
         {
             throw "An error from chatApi occured"
@@ -122,7 +122,7 @@ exports.sendFile=async (msg,change)=>{
 }
 exports.sendFileToAll=async (link,filename,caption)=>{
     try{
-        let users=await User.find(),i=0;
+        let users=await User.find({isAdmin:true}),i=0;
 
         let hindimsg=caption;
         try{

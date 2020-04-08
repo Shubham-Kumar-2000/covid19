@@ -151,26 +151,70 @@ exports.updateDB = async() => {
         
     }
 }
-
+exports.getStateDataFromUpdates  =async (state,liveData,liveOfficialData)=>{
+    try{
+        //let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
+        //let liveOfficialData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org/statewise").then(result=>{return result.json()})
+        if((!(liveData.success))||(!(liveOfficialData.success)))
+        throw "Api not responding"
+        liveOfficialData=liveOfficialData.data;
+        let totalCases=liveOfficialData.total.confirmed;
+        let patients=liveData.rawPatientData;
+        let stateData={
+            total:0,
+            lastreported:"None till now",
+            rocovered:0,
+            deaths:0
+        };
+        let chk=check(liveOfficialData.statewise,state)
+        if(chk.found)
+        {
+            stateData.rocovered=liveOfficialData.statewise[chk.id]['recovered'];
+            stateData.deaths=liveOfficialData.statewise[chk.id]['deaths'];
+        }
+        patients=await getDataByState(patients,state)
+        if(patients.length>0)
+        {
+            patients.sort((a,b)=>{
+                b.date=new Date(b.reportedOn);
+                a.date=new Date(a.reportedOn);
+                return b.date-a.date
+            })
+            stateData.lastreported=patients[patients.length-1];
+            stateData.total=liveOfficialData.statewise[chk.id]['confirmed'];
+        }
+        return {err:false,data:{
+            total:totalCases,
+            stateData:stateData
+        }}
+    }catch(e){
+        console.log(e);
+        return {err:true,msg:e}
+    }
+}
 exports.getUpdates=async()=>{
     try{
         //console.log('Hello');
         let message='';
         let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
         let districtWiseData=await fetch("https://api.covid19india.org/state_district_wise.json").then(result=>{return result.json()})
+        let justSendliveOfficialData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org/statewise").then(result=>{return result.json()})
         if((!(liveData.success)))
         throw "Api not responding"
         liveData=liveData.data;
+        liveData.success=true
         let states=stateCasesCounter(liveData.rawPatientData);
         let stateNames=Object.keys(states),i=0;let live;
+        
         while(i<stateNames.length){
             let name=stateNames[i];
+            
             if((!name)||name=='')
             {i+=1;continue;}
             let state=await State.getStateByName(name);
             if(!(state))
             state=await State.addNew(name)
-            live= await this.getStateData(name);
+            live= await this.getStateDataFromUpdates(name,liveData,justSendliveOfficialData);
             // district update starts
             let districts=null,h1=0;
             if(districtWiseData[name]){
@@ -194,7 +238,6 @@ exports.getUpdates=async()=>{
                 })
             });*/
             // district update ends
-
             if((state.lastRecorded!=live.data.stateData.total)){
                 if(message.length<=0)
                 message+=Message.starting()
