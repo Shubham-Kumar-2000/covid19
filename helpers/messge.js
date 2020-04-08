@@ -26,7 +26,7 @@ exports.starting=()=>{
     let d = new Date(indiaTime);
     let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
-    return "*New Update *:"+hh+':'+mm+" "+ap+" | "+da+'-'+mo+'-'+ye+'\n\n\n';
+    return "*New Update* :"+hh+':'+mm+" "+ap+" | "+da+'-'+mo+'-'+ye+'\n\n\n';
 }
 
 exports.DistrictToMessage=(districtData)=>{
@@ -38,7 +38,7 @@ exports.searchState=(state)=>{
 exports.countryToMessage=(data)=>{
     return "In *"+data.name+"* there has been *"
     +data.confirmed+"* confirmed cases.\nRecovered: "
-    +data.rocovered+"\nDeaths: "
-    +data.deaths+"\Active cases: "
+    +data.recovered+"\nDeaths: "
+    +data.deaths+"\nActive cases: "
     +data.active
 }

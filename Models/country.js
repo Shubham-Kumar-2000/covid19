@@ -43,7 +43,7 @@ countrySchema.statics.all= async ()=>{
     return Country.find().sort( { name: 1 } )
 }
 countrySchema.statics.getCountry= async (name)=>{
-    return Country.find({name})
+    return Country.findOne({name})
 }
 countrySchema.statics.getCount= async ()=>{
     return Country.find().count()

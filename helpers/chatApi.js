@@ -40,6 +40,7 @@ exports.sendmsg=async (msg,change)=>{
             }
         }
         let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
+        
         if(!(sentMessage.sent))
         {
             throw "An error from chatApi occured"
@@ -109,6 +110,7 @@ exports.sendFile=async (msg,change)=>{
             }
         }
         let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendFile?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
+        console.log(sentMessage)
         if(!(sentMessage.sent))
         {
             throw "An error from chatApi occured"
@@ -138,7 +140,7 @@ exports.sendFileToAll=async (link,filename,caption)=>{
             if(user.lang!='ENGLISH')
             msg.caption=hindimsg;
             msg.phone=user.number;
-            this.sendmsg(msg,false).then(sent=>{
+            this.sendFile(msg,false).then(sent=>{
                 if(!sent)
                 console.log("Msg was not sent to : ",user.number)
             }).catch(e=>{
