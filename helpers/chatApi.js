@@ -110,7 +110,7 @@ exports.sendFile=async (msg,change)=>{
             }
         }
         let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendFile?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
-        console.log(sentMessage)
+        //console.log(sentMessage)
         if(!(sentMessage.sent))
         {
             throw "An error from chatApi occured"
