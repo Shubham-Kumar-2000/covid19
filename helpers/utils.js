@@ -165,7 +165,7 @@ exports.getUpdates=async()=>{
         let stateNames=Object.keys(states),i=0;let live;
         while(i<stateNames.length){
             let name=stateNames[i];
-            if(name=='')
+            if((!name)||name=='')
             {i+=1;continue;}
             let state=await State.getStateByName(name);
             if(!(state))
@@ -194,6 +194,7 @@ exports.getUpdates=async()=>{
                 })
             });*/
             // district update ends
+
             if((state.lastRecorded!=live.data.stateData.total)){
                 if(message.length<=0)
                 message+=Message.starting()
