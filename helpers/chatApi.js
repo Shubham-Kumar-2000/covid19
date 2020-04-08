@@ -155,3 +155,36 @@ exports.sendFileToAll=async (link,filename,caption)=>{
         return false
     }
 }
+exports.sendFileToAdmin=async (link,filename,caption)=>{
+    try{
+        let users=await User.find({isAdmin:true}),i=0;
+
+        let hindimsg=caption;
+        try{
+            let bb=await trans(caption);
+            hindimsg=bb;
+        }
+        catch(e){
+            console.log(e)
+            hindimsg+='\n\nSorry our translator is not working.We will fix it soon.';
+        }
+        while(i<users.length){
+            let user=users[i],msg={caption:caption,filename:filename,body:link}
+            if(user.lang!='ENGLISH')
+            msg.caption=hindimsg;
+            msg.phone=user.number;
+            this.sendFile(msg,false).then(sent=>{
+                if(!sent)
+                console.log("Msg was not sent to : ",user.number)
+            }).catch(e=>{
+                console.log(e)
+            });
+            i+=1;
+        }
+        return true
+    }
+    catch(e){
+        console.log(e)
+        return false
+    }
+}

@@ -53,7 +53,13 @@ exports.sendUpdate=async()=>{
         console.log(e)
     }
 }
-
+exports.sendUpdateAdmin=async()=>{
+    try{
+        await ChatApi.sendFileToAdmin(process.env.BASEURL+'/chart.png',JSON.stringify(new Date()),'')
+    }catch(e){
+        console.log(e)
+    }
+}
 
 function check(arr,nn) {
     let i=0;
