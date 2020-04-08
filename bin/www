@@ -36,7 +36,7 @@ if(process.env.CLUSTER === 'yes') {
         //console.log("d",data);
       }).catch(err=>{//console.log("e",err)});*/
     })
-    let updates2=schedule.scheduleJob('0 */2 * * *',async function(){
+    let updates2=schedule.scheduleJob('15 */2 * * *',async function(){
       //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
          let message = await Utills.updateDB()
