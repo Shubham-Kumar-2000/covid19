@@ -22,8 +22,8 @@ exports.stateToMessageDeaths=(diff)=>{
     return "New *"+diff+" Death(s)* detected\n\n"
 }
 exports.starting=()=>{
-    var indiaTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-    let d = new Date(indiaTime);
+    var indiaTime = new Date();
+    let d = new Date();
     let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
     return "*New Update* :"+hh+':'+mm+" "+ap+" | "+da+'-'+mo+'-'+ye+'\n\n\n';

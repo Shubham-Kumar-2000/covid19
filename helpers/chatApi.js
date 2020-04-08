@@ -157,6 +157,7 @@ exports.sendFileToAll=async (link,filename,caption)=>{
 }
 exports.sendFileToAdmin=async (link,filename,caption)=>{
     try{
+        console.log("called")
         let users=await User.find({isAdmin:true}),i=0;
 
         let hindimsg=caption;
