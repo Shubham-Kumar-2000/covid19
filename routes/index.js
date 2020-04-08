@@ -53,6 +53,7 @@ router.post('/createmenu', (req, res) => {
     }
   ]
 }*/
+
 router.get('/graph',async (req, res) => {
   let data=await India.all()
   res.render('index',{data:JSON.stringify(data)})
@@ -63,7 +64,7 @@ router.get('/date',async (req, res) => {
 
 router.get('/sendMessages',async (req, res) => {
   res.status(200).json({s:'s'})
-  util.getUpdates()
+  util.sendUpdate()
 });
 router.post('/addDailyCases',async (req, res) => {
   try{
@@ -75,6 +76,30 @@ router.post('/addDailyCases',async (req, res) => {
 
 });
 
+const Nightmare = require('nightmare');
+const path = require('path')
+router.get('/updateGraph',async (req, res) => {
+  const urlToCapture = process.env.BASEURL+'/graph'; 
+    const outputFilePath = path.join(__dirname,"../public/chart.png");
+
+    const nightmare = new Nightmare(); // Create Nightmare instance.
+    nightmare.goto(urlToCapture) // Point the browser at the requested web page.
+        .wait("#shu") // Wait until the specified HTML element appears on the screen. 
+        .screenshot(outputFilePath) // Capture a screenshot to an image file.
+        .end() // End the Nightmare session. Any queued operations are completed and the headless browser is terminated.
+        .then(() => {
+            console.log("Done!");
+        })
+        .catch(err => {
+            console.error(err);
+        }).then(r=>{
+    res.send("Check /chart.png")
+  }).catch(e=>{
+    res.send("error occured")
+  }
+  )
+
+});
 router.get('/show',async (req, res) => {
   util.updateIndia().then(r=>{
     res.send("Check /chart.png")
@@ -197,7 +222,7 @@ router.post('/messages',async (req, res) => {
             },user.lang!='ENGLISH')
             let updateUser=await User.setLastServedMenuName(user.number,"stateMenu");
           }
-          if(choice==1){
+          else if(choice==1){
             replyMsg = "Reply with Country Name. [If not getting it right, find country names here, copy the one you wish to query and send it: ";
              ChatApi.sendmsg({
               phone:user.number,
@@ -216,15 +241,14 @@ router.post('/messages',async (req, res) => {
               let updateUser=await User.setLastServedMenuName(user.number,"langMenu");
             }
             else if(choice == 5) {
-              let news = News.getAllNews();
+              let news =await News.getAllNews();
               let min = Math.ceil(0);
               let max = Math.floor(news.length-2);
               let num = Math.floor(Math.random() * (max - min + 1)) + min;
-              let sendNews = news.slice(num,num+2);
+              let sendNews = news;
               let message = "";
-              for(i=0;i<sendNews.length;i++)
-                message += sendNews[i].message + "\n\n"
-              message = message.trim();
+              for(i=num;i<(num+2);i++)
+                message += sendNews[i].message + "\n\n";
               ChatApi.sendmsg({
                 phone:user.number,
                 body:message
@@ -253,7 +277,15 @@ router.post('/messages',async (req, res) => {
         else if(menuName == "stateMenu") {
           let menu= await Menu.findOne({name:"stateMenu"})
           let choice = parseInt(recvMsg);
-          if(choice >= 1 && choice <= 35){
+          if(choice==38){
+            
+            let m=await getAllStateDataAtOnce()
+            ChatApi.sendmsg({
+              phone:user.number,
+              body:m
+            },user.lang!='ENGLISH')
+          }else 
+          if(choice >= 1 && choice <= 37){
             let stateData=await util.getStateData(menu.options[choice-1].description);
             let stateName = menu.options[choice-1].description;
             if(stateData.data.stateData.total==0)
@@ -365,6 +397,8 @@ router.post('/messages',async (req, res) => {
         }
         else{
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
+          if(!menu)
+          {menu= await Menu.findOne({name: "baseMenu"}),menuName="";}
           menu.options.forEach(option => {
             replyMsg += option.slNo + " : *"+option.description+"*\n\n";
           });
@@ -390,7 +424,7 @@ router.post('/messages',async (req, res) => {
           for(i=0;i<countries.length;i++)
               if(recvMsg.toLocaleLowerCase() == countries[i].name.toLocaleLowerCase()) {
                 found = true;  
-                let countryData=await Country.getCountry(menu.options[choice-1].description);
+                let countryData=await Country.getCountry(countries[i].name);
                 await ChatApi.sendmsg({
                  phone:user.number,
                  body:Message.countryToMessage(countryData)
