@@ -140,12 +140,9 @@ exports.sendFileToAll=async (link,filename,caption)=>{
             if(user.lang!='ENGLISH')
             msg.caption=hindimsg;
             msg.phone=user.number;
-            this.sendFile(msg,false).then(sent=>{
-                if(!sent)
+            let sent = await this.sendFile(msg,false)
+            if(!sent)
                 console.log("Msg was not sent to : ",user.number)
-            }).catch(e=>{
-                console.log(e)
-            });
             i+=1;
         }
         return true
@@ -174,12 +171,9 @@ exports.sendFileToAdmin=async (link,filename,caption)=>{
             if(user.lang!='ENGLISH')
             msg.caption=hindimsg;
             msg.phone=user.number;
-            this.sendFile(msg,false).then(sent=>{
-                if(!sent)
+            let sent = await this.sendFile(msg,false)
+            if(!sent)
                 console.log("Msg was not sent to : ",user.number)
-            }).catch(e=>{
-                console.log(e)
-            });
             i+=1;
         }
         return true

@@ -56,7 +56,7 @@ if(process.env.CLUSTER === 'yes') {
         console.log(e)
       }
     })
-    let sendUpdateAdmin=schedule.scheduleJob('10 1 * * *',async function(){
+    let sendUpdateAdmin=schedule.scheduleJob('20 1 * * *',async function(){
       try{
         console.log("sending Admins")
         await Utills.sendUpdateAdmin()
