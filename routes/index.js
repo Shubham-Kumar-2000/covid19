@@ -223,7 +223,7 @@ router.post('/messages',async (req, res) => {
             let updateUser=await User.setLastServedMenuName(user.number,"stateMenu");
           }
           else if(choice==1){
-            replyMsg = "Reply with Country Name. [If not getting it right, find country names here, copy the one you wish to query and send it: ";
+            replyMsg = "Reply with Country Name. [If not getting it right, find country names here: https://pcms19.000webhostapp.com/, copy the one you wish to query and send it]: ";
              ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
@@ -433,7 +433,7 @@ router.post('/messages',async (req, res) => {
               break
             }
           if(!found){
-            replyMsg = "No such country found!!! Reply with valid Country Name. [If not getting it right, find country names here, copy the one you wish to query and send it: ";
+            replyMsg = "No such country found!!! Reply again. [If not getting it right, find country names here: https://pcms19.000webhostapp.com/, copy the one you wish to query and send it]: ";
              ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
