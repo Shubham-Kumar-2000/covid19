@@ -26,7 +26,7 @@ if(process.env.CLUSTER === 'yes') {
     let updates=schedule.scheduleJob('*/'+process.env.UPDATE_INTERVAL+' * * * *',async function(){
       //console.log("Checking for Update... Time now: ",new Date().toString())
        try{
-         let message = await Utills.getUpdates()
+         //let message = await Utills.getUpdates()
        //console.log(message+" Time now: ",new Date().toString());
        }
        catch(e){
@@ -58,7 +58,7 @@ if(process.env.CLUSTER === 'yes') {
     })
     let sendUpdate=schedule.scheduleJob('0 8 * * *',async function(){
       try{
-        //await Utills.sendUpdate()
+        //heroawait Utills.sendUpdate()
       }catch(e){
         console.log(e)
       }
