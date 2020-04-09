@@ -101,6 +101,9 @@ router.get('/updateGraph',async (req, res) => {
   )
 
 });
+router.get('/ppt',(req,res)=>{
+  res.sendFile(path.join(__dirname,'../example.png'));
+})
 router.get('/show',async (req, res) => {
   util.updateIndia().then(r=>{
     res.send("Check /chart.png")
