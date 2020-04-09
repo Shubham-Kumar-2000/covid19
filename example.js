@@ -5,13 +5,13 @@ const puppeteer = require('puppeteer');
   const page = await browser.newPage();
   await page.setViewport({
     width: 786,
-    height: 693,
+    height: 553,
     deviceScaleFactor: 1,
   });
   await page.goto('http://ec2-13-58-166-188.us-east-2.compute.amazonaws.com:3000/graph');
-  await page
+await page
     .waitForSelector('#shu')
-
+    await page.waitFor(3000);
   await page.screenshot({path: __dirname+'/example.png'});
     console.log("ss taken")
   await browser.close();
