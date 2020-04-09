@@ -15,6 +15,7 @@ const India = require('../Models/india')
 const Country=require('../Models/country')
 const Config=require('../Models/Config')
 var  translate = require("translate");
+const puppeteer = require('puppeteer');
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
 translate.from = 'hi';
@@ -76,29 +77,32 @@ router.post('/addDailyCases',async (req, res) => {
 
 });
 
-const Nightmare = require('nightmare');
 const path = require('path')
 router.get('/updateGraph',async (req, res) => {
+  try{
   const urlToCapture = 'http://localhost:3000/graph'; 
     const outputFilePath = path.join(__dirname,"../public/chart.png");
     console.log(urlToCapture,outputFilePath)
 
-    const nightmare = new Nightmare(); // Create Nightmare instance.
-    nightmare.goto(urlToCapture) // Point the browser at the requested web page.
-        .wait("#shu") // Wait until the specified HTML element appears on the screen. 
-        .screenshot(outputFilePath) // Capture a screenshot to an image file.
-        .end() // End the Nightmare session. Any queued operations are completed and the headless browser is terminated.
-        .then(() => {
-            console.log("Done!");
-        })
-        .catch(err => {
-            console.error(err);
-        }).then(r=>{
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setViewport({
+        width: 786,
+        height: 543,
+        deviceScaleFactor: 1,
+    });
+    await page.goto(urlToCapture);
+    await page.waitForSelector('#shu')
+    await page.waitFor(1000);
+    await page.screenshot({path: outputFilePath});
+    console.log("ss taken")
+    await browser.close();
     res.send("Check /chart.png")
-  }).catch(e=>{
+  }catch(e){
+    console.log(e)
     res.send("error occured")
   }
-  )
+  
 
 });
 router.get('/ppt',(req,res)=>{

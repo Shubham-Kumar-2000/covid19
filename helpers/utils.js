@@ -13,7 +13,7 @@ const Country=require('../Models/country')
 const NewsAPI = require('newsapi');
 const India=require('../Models/india')
 const NewsFetch = new NewsAPI(process.env.NEWS_API_KEY);
-const Nightmare = require('nightmare');
+const puppeteer = require('puppeteer');
 const Config=require('../Models/Config')
 const path = require('path')
 exports.updateIndia=async()=>{
@@ -25,22 +25,21 @@ exports.updateIndia=async()=>{
     lastIndiaData.rec=liveOfficialData.data.total.recovered;
     lastIndiaData.dead=liveOfficialData.data.total.deaths;
     await lastIndiaData.save()
-    
-    
     const urlToCapture = process.env.BASEURL+'/graph'; 
     const outputFilePath = path.join(__dirname,"../public/chart.png");
-
-    const nightmare = new Nightmare(); // Create Nightmare instance.
-    nightmare.goto(urlToCapture) // Point the browser at the requested web page.
-        .wait("#shu") // Wait until the specified HTML element appears on the screen. 
-        .screenshot(outputFilePath) // Capture a screenshot to an image file.
-        .end() // End the Nightmare session. Any queued operations are completed and the headless browser is terminated.
-        .then(() => {
-            console.log("Done!");
-        })
-        .catch(err => {
-            console.error(err);
-        })
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setViewport({
+        width: 786,
+        height: 543,
+        deviceScaleFactor: 1,
+    });
+    await page.goto(urlToCapture);
+    await page.waitForSelector('#shu')
+    await page.waitFor(1000);
+    await page.screenshot({path: outputFilePath});
+    console.log("ss taken")
+    await browser.close();
     }
     catch(e){
         console.log(e)
