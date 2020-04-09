@@ -210,7 +210,8 @@ exports.getUpdates=async()=>{
         liveData.success=true
         let states=stateCasesCounter(liveData.rawPatientData);
         let stateNames=Object.keys(states),i=0;let live;
-        
+        let lastIndiaData=await Config.findOne({active:true});
+        if(!lastIndiaData) lastIndiaData=0;
         while(i<stateNames.length){
             let name=stateNames[i];
             
@@ -261,7 +262,7 @@ exports.getUpdates=async()=>{
         if(message.length>0)
         {
             // console.log("from here")
-            message+=Message.ending(live.data.total)
+            message+=Message.ending(live.data.total,lastIndiaData)
             try{
                 ChatApi.sendToAll(message);
                 return true
