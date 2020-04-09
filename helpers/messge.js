@@ -10,7 +10,7 @@ exports.stateToMessage=(name,data,isNew=false,diff=0)=>{
     +data.stateData.lastreported.gender+"\n\n\n"
 }
 exports.ending=(num,num2)=>{
-    return `Till now there has been *${num}* confirmed cases in India and *${num2}* cases reported today. Please stay in your homes isolated and use sanitizers and disinfectant sprays frequently. Wear a mask. Stay safe and positive.`
+    return `Till now there has been *${num}* confirmed cases in India and *${num-num2}* cases reported today. Please stay in your homes isolated and use sanitizers and disinfectant sprays frequently. Wear a mask. Stay safe and positive.`
 }
 exports.stateToMessageFormList=(diff)=>{
     if(diff>0)
