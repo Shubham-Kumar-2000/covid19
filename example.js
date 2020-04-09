@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
   const page = await browser.newPage();
   await page.setViewport({
     width: 786,
-    height: 550,
+    height: 545,
     deviceScaleFactor: 1,
   });
   await page.goto('http://ec2-13-58-166-188.us-east-2.compute.amazonaws.com:3000/graph');
