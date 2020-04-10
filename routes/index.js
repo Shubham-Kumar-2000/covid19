@@ -444,7 +444,7 @@ router.post('/messages',async (req, res) => {
               break
             }
           if(!found){
-            replyMsg = "No such country found!!! Reply again. [If not getting it right, find country names here: https://pcms19.000webhostapp.com/, copy the one you wish to query and send it]: ";
+            replyMsg = "No such country found!!! Reply again.\n\n [If not getting it right, find country names here: https://pcms19.000webhostapp.com/, copy the one you wish to query and send it]: ";
              ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
