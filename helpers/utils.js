@@ -210,6 +210,9 @@ exports.getUpdates=async()=>{
         let stateNames=Object.keys(states),i=0;let live;
         let lastIndiaData=await Config.findOne({active:true});
         if(!lastIndiaData) lastIndiaData=0;
+        let min = Math.ceil(0);
+        let max = Math.floor(23);
+        let tagNum = Math.floor(Math.random() * (max - min + 1)) + min;
         while(i<stateNames.length){
             let name=stateNames[i];
             
@@ -245,13 +248,13 @@ exports.getUpdates=async()=>{
             if((state.lastRecorded!=live.data.stateData.total)){
                 if(message.length<=0)
                 message+=Message.starting()
-                message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded)+Message.stateToMessage(name,live))
+                message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded)+Message.stateToMessage(name,live,true))
                 state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
             }
             else if((state.lastRecordedDeaths!=live.data.stateData.deaths)&&((state.lastRecordedDeaths-live.data.stateData.deaths)<0)){
                 if(message.length<=0)
                 message+=Message.starting()
-                message+=(Message.stateToMessageDeaths(live.data.stateData.deaths-state.lastRecordedDeaths)+Message.stateToMessage(name,live))
+                message+=(Message.stateToMessageDeaths(live.data.stateData.deaths-state.lastRecordedDeaths)+Message.stateToMessage(name,live,true))
                 state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
             }
             i+=1;
@@ -260,7 +263,7 @@ exports.getUpdates=async()=>{
         if(message.length>0)
         {
             // console.log("from here")
-            message+=Message.ending(live.data.total,lastIndiaData.con)
+            message+=Message.ending(live.data.total,lastIndiaData.con,tagNum)
             try{
                 ChatApi.sendToAll(message);
                 return true
