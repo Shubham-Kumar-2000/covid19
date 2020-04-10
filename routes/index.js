@@ -188,7 +188,7 @@ router.post('/messages',async (req, res) => {
       }
       if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
         try{
-          let delStatus = await User.findByIdAndUpdate({'number':user.number},{'active':false});
+          let delStatus = await User.findOneAndUpdate({'number':user.number},{'active':false});
            ChatApi.sendmsg({
             phone:user.number,
             body:"Your have been unsubscribed. Reply Hi to subscribe again"
