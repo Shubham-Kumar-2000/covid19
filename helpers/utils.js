@@ -248,13 +248,13 @@ exports.getUpdates=async()=>{
             if((state.lastRecorded!=live.data.stateData.total)){
                 if(message.length<=0)
                 message+=Message.starting()
-                message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded)+Message.stateToMessage(name,live,true))
+                message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded,stateNames[i])+Message.stateToMessage(name,live,true))
                 state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
             }
             else if((state.lastRecordedDeaths!=live.data.stateData.deaths)&&((state.lastRecordedDeaths-live.data.stateData.deaths)<0)){
                 if(message.length<=0)
                 message+=Message.starting()
-                message+=(Message.stateToMessageDeaths(live.data.stateData.deaths-state.lastRecordedDeaths)+Message.stateToMessage(name,live,true))
+                message+=(Message.stateToMessageDeaths(live.data.stateData.deaths-state.lastRecordedDeaths,stateNames[i])+Message.stateToMessage(name,live,true))
                 state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
             }
             i+=1;
