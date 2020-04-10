@@ -464,7 +464,7 @@ router.post('/messages',async (req, res) => {
               let max = Math.floor(news.length-2);
               let num = Math.floor(Math.random() * (max - min + 1)) + min;
               let sendNews = news;
-              for(i=num;i<(num+2);i++)
+              for(i=num;i<(num+1);i++)
                 replyMsg += sendNews[i].message + "\n\n";
             }
             if(countries.length!=0){
