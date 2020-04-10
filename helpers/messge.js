@@ -52,8 +52,8 @@ exports.stateToMessageFormList=(diff,name)=>{
     else
     return `New *${0-diff} Negative* Case(s) detected in ${name}. Current Statistics:\n\n`
 }
-exports.stateToMessageDeaths=(diff)=>{
-    return "New *"+diff+" Death(s)* detected\n\n"
+exports.stateToMessageDeaths=(diff,name)=>{
+    return `New *${diff} Death(s)* detected in ${name}. Current Statistics:\n\n`
 }
 exports.starting=()=>{
     var indiaTime = new Date();
