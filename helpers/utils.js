@@ -141,8 +141,6 @@ exports.updateDB = async() => {
             }
         }).then(result=>{return result.json()});
         for(i=0;i<getCountryWiseData.countries_stat.length;i++) {
-            console.log(i,getCountryWiseData.countries_stat[i].country_name);
-            
             await Country.saveOrUpdateCountry({
                 name: getCountryWiseData.countries_stat[i].country_name,
                 confirmed: getCountryWiseData.countries_stat[i].cases,
