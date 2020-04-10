@@ -31,7 +31,7 @@ let advices = [
 
 exports.stateToMessage=(name,data,isNew=false)=>{
     data=data.data.stateData
-    let start;
+    let start = '';
     if(!isNew)
         start = "Current State Data for *"+name+"*:\n\n"
     start += "Confirmed: "+data.total+"\nRecovered: "+data.rocovered+"\nDeaths: "+data.deaths
@@ -46,7 +46,7 @@ exports.stateToMessage=(name,data,isNew=false)=>{
 exports.ending=(num,num2,t)=>{
     return `Till now there has been *${num}* confirmed cases in India and *${num-num2}* cases reported today.\n\n*_${advices[t]}_*`
 }
-exports.stateToMessageFormList=(name,diff)=>{
+exports.stateToMessageFormList=(diff,name)=>{
     if(diff>0)
     return `New *${diff} Positive* Case(s) detected in ${name}. Current Statistics:\n\n`
     else
