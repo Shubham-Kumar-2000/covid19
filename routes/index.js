@@ -210,7 +210,7 @@ router.post('/messages',async (req, res) => {
         if(menuName==""){
           let menu= await Menu.findOne({name:"baseMenu"})
           menu.options.forEach(option => {
-            replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+            replyMsg += option.slNo + " : *"+option.description+"*\n";
           });
           replyMsg += "Send Reply witn any option number....";
            ChatApi.sendmsg({
@@ -224,7 +224,7 @@ router.post('/messages',async (req, res) => {
           if(choice==2){
             let menu= await Menu.findOne({name:"stateMenu"});
             menu.options.forEach(option => {
-              replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+              replyMsg += option.slNo + " : *"+option.description+"*\n";
             });
             replyMsg += "Send Reply witn any option number....";
              ChatApi.sendmsg({
@@ -277,7 +277,7 @@ router.post('/messages',async (req, res) => {
           else{
             let menu= await Menu.findOne({name:"baseMenu"})
             menu.options.forEach(option => {
-              replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+              replyMsg += option.slNo + " : *"+option.description+"*\n";
             });
              ChatApi.sendmsg({
               phone:user.number,
@@ -302,7 +302,7 @@ router.post('/messages',async (req, res) => {
             if(stateData.data.stateData.total==0)
              ChatApi.sendmsg({
               phone:user.number,
-              body:"Not a single case in this state.\n\nStill be Safe and be at Home"
+              body:"Not a single case in this state.\nStill be Safe and be at Home"
             },user.lang!='ENGLISH')
             else
              ChatApi.sendmsg({
@@ -314,7 +314,7 @@ router.post('/messages',async (req, res) => {
             if(menu2){
               replyMsg = `We are having information about these districts under the *${stateName}* state\n\n`;
               menu2.options.forEach(option => {
-                replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+                replyMsg += option.slNo + " : *"+option.description+"*\n";
               });
               replyMsg += "Send Reply witn any option number....";
                ChatApi.sendmsg({
@@ -329,7 +329,7 @@ router.post('/messages',async (req, res) => {
           }
           else{
             menu.options.forEach(option => {
-              replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+              replyMsg += option.slNo + " : *"+option.description+"*\n";
             });
             replyMsg += "Send Reply witn any option number....";
              ChatApi.sendmsg({
@@ -348,7 +348,7 @@ router.post('/messages',async (req, res) => {
                 if(!districtData|| districtData.confirmedCases==0)
                  ChatApi.sendmsg({
                   phone:user.number,
-                  body:"Not a single case in this District.\n\nStill be Safe and be at Home"
+                  body:"Not a single case in this District.\nStill be Safe and be at Home"
                 },user.lang!='ENGLISH')
                 else
                  ChatApi.sendmsg({
@@ -361,7 +361,7 @@ router.post('/messages',async (req, res) => {
                 let menu2= await Menu.findOne({name:"districtMenu@"+stateName});
                 replyMsg = `Selecet valid choice\nDistricts under the *${stateName}* state\n`;
                 menu2.options.forEach(option => {
-                  replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+                  replyMsg += option.slNo + " : *"+option.description+"*\n";
                 });
                 replyMsg += "Send Reply witn any option number....";
                  ChatApi.sendmsg({
@@ -411,7 +411,7 @@ router.post('/messages',async (req, res) => {
           if(!menu)
           {menu= await Menu.findOne({name: "baseMenu"}),menuName="";}
           menu.options.forEach(option => {
-            replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+            replyMsg += option.slNo + " : *"+option.description+"*\n";
           });
            ChatApi.sendmsg({
             phone:user.number,
@@ -503,7 +503,7 @@ router.post('/messages',async (req, res) => {
         let menuName=user.lastServedMenuName;
           let menu= await Menu.findOne({name:(menuName == "" ? "baseMenu" : menuName)})
           menu.options.forEach(option => {
-            replyMsg += option.slNo + " : *"+option.description+"*\n\n";
+            replyMsg += option.slNo + " : *"+option.description+"*\n";
           });
            ChatApi.sendmsg({
             phone:user.number,
@@ -531,7 +531,7 @@ let getAllStateDataAtOnce = async () => {
       return b.confirmed - a.confirmed;
     })
   for(i=0;i<statewise.length;i++)
-    message += "\n\n"+statewise[i].state+":\n*"+statewise[i].confirmed+"* | *"+statewise[i].recovered+"* | *"+statewise[i].deaths+"* | *"+statewise[i].active+"*"
+    message += "\n"+statewise[i].state+":\n*"+statewise[i].confirmed+"* | *"+statewise[i].recovered+"* | *"+statewise[i].deaths+"* | *"+statewise[i].active+"*"
   return message
 }
 
