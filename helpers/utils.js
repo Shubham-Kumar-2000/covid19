@@ -262,7 +262,7 @@ exports.getUpdates=async()=>{
         if(message.length>0)
         {
             // console.log("from here")
-            message+=Message.ending(live.data.total,lastIndiaData)
+            message+=Message.ending(live.data.total,lastIndiaData.con)
             try{
                 ChatApi.sendToAll(message);
                 return true
