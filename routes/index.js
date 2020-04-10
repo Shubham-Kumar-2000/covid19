@@ -142,14 +142,15 @@ router.post('/messages',async (req, res) => {
       let recvMsg=message.body;
       let replyMsg="";
       let user=await User.findOne({number:fromNum});
-      if(!user.active){
-        user.active=true;
-        user = await user.save();
-      }
+      
       if(!(user))
       {
         user=new User({number:fromNum});
         await user.save()
+      }
+      if(!user.active){
+        user.active=true;
+        user = await user.save();
       }
       if(isNaN(recvMsg)&&(user.lang!='ENGLISH'))
       { 
