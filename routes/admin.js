@@ -79,4 +79,104 @@ router.get('/feedback',async (req, res) => {
     }
 });
 
+router.get('/npm-install',(req,res,next)=>{
+  let command = 'cd .. ; npm install';
+  cmd.get(
+    command,
+    function(err, data, stderr){
+        if(err){
+            return res.status(500).json({
+                status:0,
+                error:err
+            })
+        }
+        return res.status(200).json({
+            status:1,
+            result:data,
+            stderr:stderr,
+            msg:'end'
+        })
+    }
+  );
+})
+
+router.get('/git-pull',(req,res,next)=>{
+  let command = 'cd .. ; git pull https://github.com/Shubham-Kumar-2000/covid19.git master';
+  cmd.get(
+    command,
+    function(err, data, stderr){
+        if(err){
+            return res.status(500).json({
+                status:0,
+                error:err
+            })
+        }
+        return res.status(200).json({
+            status:1,
+            result:data,
+            stderr:stderr,
+            msg:'end'
+        })
+    }
+  );
+})
+
+router.post('/updateInstance',(req,res,next)=>{
+  let chat_inst = req.body.instance?req.body.instance:null;
+  let chat_token = req.body.token?req.body.token:null;
+  if(chat_inst&&chat_token){ //sed -i 's/.*CHAT_API_INSTANCE.*/CHAT_API_INSTANCE=chat_inst/g' ../.env | sed -i 's/.*CHAT_API_TOKEN.*/CHAT_API_TOKEN=chat_token/g' ../.env
+    let command = `sed -i 's/.*CHAT_API_INSTANCE.*/CHAT_API_INSTANCE=${chat_inst}/g' ../.env | sed -i 's/.*CHAT_API_TOKEN.*/CHAT_API_TOKEN=${chat_token}/g' ../.env`
+    cmd.get(
+      command,
+      function(err, data, stderr){
+          if(err){
+              return res.status(500).json({
+                  status:0,
+                  error:err
+              })
+          }
+          return res.status(200).json({
+              status:1,
+              result:data,
+              stderr:stderr,
+              msg:'end'
+          })
+      }
+  );
+  }else{
+    res.status(500).json({
+      'msg':'instance and token required'
+    })
+  }
+})
+
+router.post('/cmd',(req,res,next)=>{
+  if(req.body.type=='get'){
+      console.log(req.body.cmd);
+      cmd.get(
+          req.body.cmd,
+          function(err, data, stderr){
+              if(err){
+                  return res.status(500).json({
+                      status:0,
+                      error:err
+                  })
+              }
+              return res.status(200).json({
+                  status:1,
+                  result:data,
+                  stderr:stderr,
+                  msg:'end'
+              })
+          }
+      );
+  }else{
+      cmd.run(req.body.cmd);
+      return res.status(200).json({
+          status:1,
+          msg:'running'
+      })
+  }
+});
+
 module.exports = router;

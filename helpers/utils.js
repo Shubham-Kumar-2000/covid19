@@ -215,7 +215,7 @@ exports.getUpdates=async()=>{
         while(i<stateNames.length){
             let name=stateNames[i];
             
-            if((!name)||name=='')
+            if((!name)||name==''||name=='undefined'||name=='null')
             {i+=1;continue;}
             let state=await State.getStateByName(name);
             if(!(state))
