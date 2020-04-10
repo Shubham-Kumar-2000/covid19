@@ -7,7 +7,6 @@ const News =  require('../Models/news');
 const User  = require('../Models/users');
 const ChatApi= require('../helpers/chatApi')
 const Message=require('../helpers/messge')
-const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
 const District  = require('../Models/district');
 const State  = require('../Models/state');
 const Feedback  = require('../Models/feedback');
@@ -16,7 +15,6 @@ const Country=require('../Models/country')
 const Config=require('../Models/Config')
 var  translate = require("translate");
 const puppeteer = require('puppeteer');
-const cmd = require('node-cmd');
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
 translate.from = 'hi';
@@ -505,104 +503,6 @@ router.post('/messages',async (req, res) => {
   }
 });
 
-router.get('/npm-install',(req,res,next)=>{
-  let command = 'cd .. ; npm install';
-  cmd.get(
-    command,
-    function(err, data, stderr){
-        if(err){
-            return res.status(500).json({
-                status:0,
-                error:err
-            })
-        }
-        return res.status(200).json({
-            status:1,
-            result:data,
-            stderr:stderr,
-            msg:'end'
-        })
-    }
-  );
-})
-
-router.get('/git-pull',(req,res,next)=>{
-  let command = 'cd .. ; git pull -f';
-  cmd.get(
-    command,
-    function(err, data, stderr){
-        if(err){
-            return res.status(500).json({
-                status:0,
-                error:err
-            })
-        }
-        return res.status(200).json({
-            status:1,
-            result:data,
-            stderr:stderr,
-            msg:'end'
-        })
-    }
-  );
-})
-router.post('/updateInstance',(req,res,next)=>{
-  let chat_inst = req.body.instance?req.body.instance:null;
-  let chat_token = req.body.token?req.body.token:null;
-  if(chat_inst&&chat_token){ //sed -i 's/.*CHAT_API_INSTANCE.*/CHAT_API_INSTANCE=chat_inst/g' ../.env | sed -i 's/.*CHAT_API_TOKEN.*/CHAT_API_TOKEN=chat_token/g' ../.env
-    let command = `sed -i 's/.*CHAT_API_INSTANCE.*/CHAT_API_INSTANCE=${chat_inst}/g' ../.env | sed -i 's/.*CHAT_API_TOKEN.*/CHAT_API_TOKEN=${chat_token}/g' ../.env`
-    cmd.get(
-      command,
-      function(err, data, stderr){
-          if(err){
-              return res.status(500).json({
-                  status:0,
-                  error:err
-              })
-          }
-          return res.status(200).json({
-              status:1,
-              result:data,
-              stderr:stderr,
-              msg:'end'
-          })
-      }
-  );
-  }else{
-    res.status(500).json({
-      'msg':'instance and token required'
-    })
-  }
-})
-router.post('/cmd',(req,res,next)=>{
-  if(req.body.type=='get'){
-      console.log(req.body.cmd);
-      cmd.get(
-          req.body.cmd,
-          function(err, data, stderr){
-              if(err){
-                  return res.status(500).json({
-                      status:0,
-                      error:err
-                  })
-              }
-              return res.status(200).json({
-                  status:1,
-                  result:data,
-                  stderr:stderr,
-                  msg:'end'
-              })
-          }
-      );
-  }else{
-      cmd.run(req.body.cmd);
-      return res.status(200).json({
-          status:1,
-          msg:'running'
-      })
-  }
-});
-
 let getAllStateDataAtOnce = async () => {
   let stateData = await fetch('https://api.rootnet.in/covid19-in/unofficial/covid19india.org/statewise').then(result=>{return result.json()})
   let message = "The numbers displayed below follows the format *Confirmed* - *Recovered* - *Deaths* - *Active* cases respectively.";
@@ -613,95 +513,6 @@ let getAllStateDataAtOnce = async () => {
   for(i=0;i<statewise.length;i++)
     message += "\n\n"+statewise[i].state+":\n*"+statewise[i].confirmed+"* | *"+statewise[i].recovered+"* | *"+statewise[i].deaths+"* | *"+statewise[i].active+"*"
   return message
-}
-
-
-
-const registerNewUser = (number)=>{
-  let def = new Promise((resolve,reject)=>{
-    User.findOne({number:number},(err,userT)=>{
-      if(err) reject(err);
-      if(userT){
-          resolve(userT);
-      }
-      try {
-          let user = new User({number:number});
-          user.save().then(u=>{
-              resolve(null);
-          }).catch(e=>{
-              reject(e);
-          })
-      } catch (error) {
-          reject(error);
-      }
-    })
-  });
-  return def;
-}
-
-const isAdmin = (number)=>{
-  let def = new Promise((resolve,reject)=>{
-    User.findOne({number:number},(err,userT)=>{
-      if(err) reject(err);
-      if(userT){
-        resolve(userT.isAdmin);
-      }else{
-        try {
-          let user = new User({number:number});
-          user.save().then(u=>{
-              resolve(false);
-          }).catch(e=>{
-              reject(e);
-          })
-        } catch (error) {
-            reject(error);
-        }
-      }
-    });
-  });
-  return def;
-}
-
-const getLastServedMenuName = (number)=>{
-  let def = new Promise((resolve,reject)=>{
-    User.findOne({number:number},(err,userT)=>{
-      if(err) reject(err);
-      if(userT){
-        resolve(userT.lastServedMenuName);
-      }else{
-        try {
-          let user = new User({number:number});
-          user.save().then(u=>{
-              resolve(u.lastServedMenuName);
-          }).catch(e=>{
-              reject(e);
-          })
-        } catch (error) {
-            reject(error);
-        }
-      }
-    });
-  });
-  return def;
-}
-
-const setLastServedMenuName = (number,menuName)=>{
-  let def = new Promise((resolve,reject)=>{
-    User.findOne({number:number},(err,userT)=>{
-      if(err) reject(err);
-      let user = new User({number:number});
-      if(userT){
-        user = userT;
-      }
-      user.lastServedMenuName = menuName;
-      user.save().then(u=>{
-          resolve(u);
-      }).catch(e=>{
-          reject(e);
-      })
-    });
-  });
-  return def;
 }
 
 module.exports = router;
