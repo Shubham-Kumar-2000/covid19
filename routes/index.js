@@ -272,7 +272,7 @@ router.post('/messages',async (req, res) => {
               phone:user.number,
               body:menu.options[choice-1].output.split(';').join('\n')
             },user.lang!='ENGLISH')
-            let updateUser=await User.setLastServedMenuName(user.number,choice == 5 ? "feedback" : "");
+            let updateUser=await User.setLastServedMenuName(user.number,choice == 7 ? "feedback" : "");
           }
           }
           else{
@@ -296,6 +296,7 @@ router.post('/messages',async (req, res) => {
               phone:user.number,
               body:m
             },user.lang!='ENGLISH')
+            let updateUser=await User.setLastServedMenuName(user.number,"");
           }else 
           if(choice >= 1 && choice <= 37){
             let stateData=await util.getStateData(menu.options[choice-1].description);
