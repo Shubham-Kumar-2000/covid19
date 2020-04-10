@@ -79,4 +79,26 @@ router.get('/feedback',async (req, res) => {
     }
 });
 
+router.get('/userActive',async (req, res) => {
+    try{
+        let users = await User.find({});
+        if(users){
+            users.forEach(async (user)=>{
+                if(!user.hasOwnProperty('active')){
+                    user['active']=true;
+                    let newUser = await user.save();
+                }
+            });
+        }
+        res.status(200).json({
+            'status':1,
+            'msg':'updated',
+        })
+    }
+    catch(e){
+      console.log(e)
+      res.status(200).json({err:true,msg:e})
+    }
+});
+
 module.exports = router;

@@ -16,6 +16,10 @@ const userSchema =new Schema({
     lastServedMenuName:{
         type:String,
         default:'baseMenu'
+    },
+    active:{
+        type:Boolean,
+        default:true
     }
     
 },{timestamps:true});

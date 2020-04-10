@@ -54,7 +54,7 @@ exports.sendmsg=async (msg,change)=>{
 }
 exports.sendToAll=async (message)=>{
     try{
-        let users=await User.find(),i=0;
+        let users=await User.find({'active':true}),i=0;
 
         let hindimsg=message;
         try{
@@ -124,7 +124,7 @@ exports.sendFile=async (msg,change)=>{
 }
 exports.sendFileToAll=async (link,filename,caption)=>{
     try{
-        let users=await User.find(),i=0;
+        let users=await User.find({'active':true}),i=0;
 
         let hindimsg=caption;
         try{

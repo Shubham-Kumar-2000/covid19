@@ -143,7 +143,11 @@ router.post('/messages',async (req, res) => {
       let fromNum=message.chatId.split("@")[0];
       let recvMsg=message.body;
       let replyMsg="";
-      let user=await User.findOne({number:fromNum})
+      let user=await User.findOne({number:fromNum});
+      if(!user.active){
+        user.active=true;
+        user = await user.save();
+      }
       if(!(user))
       {
         user=new User({number:fromNum});
@@ -186,7 +190,7 @@ router.post('/messages',async (req, res) => {
       }
       if(recvMsg.toLocaleLowerCase()=='stop'&&!user.isAdmin){
         try{
-          let delStatus = await User.findOneAndDelete({'number':user.number});
+          let delStatus = await User.findByIdAndUpdate({'number':user.number},{'active':false});
            ChatApi.sendmsg({
             phone:user.number,
             body:"Your have been unsubscribed. Reply Hi to subscribe again"
