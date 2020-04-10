@@ -454,8 +454,28 @@ router.post('/messages',async (req, res) => {
         else {
           let states=await State.search(recvMsg);
           let districts=await District.search(recvMsg);
-          if(states.length!=0||districts.length!=0){
+          let countries=await Country.search(recvMsg);
+          if(states.length!=0||districts.length!=0||countries.length!=0||recvMsg.toLocaleLowerCase().includes("news")){
             replyMsg="Some Data based on our understanding of your msg....\n\n";
+            if(recvMsg.toLocaleLowerCase().includes("news")){
+              replyMsg+="*Latest News* :\n\n";
+              let news =await News.getAllNews();
+              let min = Math.ceil(0);
+              let max = Math.floor(news.length-2);
+              let num = Math.floor(Math.random() * (max - min + 1)) + min;
+              let sendNews = news;
+              for(i=num;i<(num+2);i++)
+                replyMsg += sendNews[i].message + "\n\n";
+            }
+            if(countries.length!=0){
+              replyMsg+="*Country Data* :\n\n";
+              let ind=0;
+              while(ind<countries.length){
+                let country=countries[ind];
+                replyMsg+=(Message.countryToMessage(country)+'\n\n');
+                ind+=1;
+              }
+            }
             if(states.length!=0){
               replyMsg+="*State Data* :\n\n";
               let ind=0;

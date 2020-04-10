@@ -48,4 +48,47 @@ countrySchema.statics.getCountry= async (name)=>{
 countrySchema.statics.getCount= async ()=>{
     return Country.find().count()
 }
+countrySchema.statics.search = function(text){
+    let txt=text.split(" ")
+    var result = [];
+
+    var loop = function (start)
+    {
+        let prefix='';
+        for(var i=start; i<txt.length; i++)
+        {
+            var next;
+            if(prefix&&prefix!='')
+            {next = prefix+' '+txt[i];prefix+=(" "+txt[i]);}
+            else
+            {next =txt[i];prefix=txt[i];
+            }
+            result.push(next);
+        }
+    }
+    
+    for(var i=0; i<txt.length; i++)
+    {
+        loop(i);
+    }
+    let temp;
+    txt=result;
+    txt.forEach((element,index) => {
+        element=('^'+element+'$')
+        if(temp){
+			temp+=('|'+element)
+        }
+        else{
+            temp=element
+        }
+    });
+    text=temp;
+    return Country.find({
+        name:{
+            $regex:new RegExp(text),
+            $options: "sim"
+        }
+    
+    })
+}
 const Country =module.exports = mongoose.model('Country', countrySchema);
