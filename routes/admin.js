@@ -105,7 +105,7 @@ router.get('/npm-install',(req,res,next)=>{
     command,
     function(err, data, stderr){
         if(err){
-            return res.status(500).json({
+            return res.status(200).json({
                 status:0,
                 error:err
             })
@@ -126,7 +126,7 @@ router.get('/git-pull',(req,res,next)=>{
     command,
     function(err, data, stderr){
         if(err){
-            return res.status(500).json({
+            return res.status(200).json({
                 status:0,
                 error:err
             })
@@ -150,7 +150,7 @@ router.post('/updateInstance',(req,res,next)=>{
       command,
       function(err, data, stderr){
           if(err){
-              return res.status(500).json({
+              return res.status(200).json({
                   status:0,
                   error:err
               })
@@ -177,7 +177,7 @@ router.post('/cmd',(req,res,next)=>{
           req.body.cmd,
           function(err, data, stderr){
               if(err){
-                  return res.status(500).json({
+                  return res.status(200).json({
                       status:0,
                       error:err
                   })
