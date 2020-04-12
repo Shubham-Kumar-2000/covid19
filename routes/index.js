@@ -497,6 +497,8 @@ router.post('/messages',async (req, res) => {
               let ind=0;
               while(ind<districts.length){
                 let district=districts[ind];
+                if(district.name=="Unknown")
+                {ind+=1;continue;}
                 replyMsg+=(Message.DistrictToMessage(district)+"\n\n");
                 ind+=1;
               }
