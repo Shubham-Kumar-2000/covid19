@@ -479,7 +479,7 @@ router.post('/messages',async (req, res) => {
               }
             }
             if(states.length!=0){
-              if((states.length==1)&&recvMsg.toLocaleLowerCase().includes("all districts"))
+              if((states.length==1)&&(recvMsg.toLocaleLowerCase().includes("all districts")||recvMsg.toLocaleLowerCase().includes("all")||recvMsg.toLocaleLowerCase().includes("districts")))
               {
                 let d=await District.getDistrictsByState(states[0].name)
                 districts.push(...d)
