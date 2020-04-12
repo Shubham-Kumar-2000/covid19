@@ -20,7 +20,7 @@ indiaSchema.statics.add=(con,rec,dead)=>{
     return data.save()
 }
 indiaSchema.statics.all=()=>{
-    return India.find().sort( { updatedAt: -1 } ).limit(10)
+    return India.find().sort( { updatedAt: -1 } ).limit(15)
 }
 indiaSchema.statics.recent=()=>{
     return India.find().sort( { updatedAt: -1 } ).limit(1)
