@@ -72,6 +72,9 @@ districtSchema.statics.getAllDistrict=()=>{
 districtSchema.statics.getDistrictByName=(name,stateName)=>{
     return District.findOne({name: name,stateName:stateName});
 }
+districtSchema.statics.getDistrictsByState=(stateName)=>{
+    return District.find({stateName:stateName});
+}
 districtSchema.statics.search = function(text){
     let txt=text.split(" ")
     var result = [];

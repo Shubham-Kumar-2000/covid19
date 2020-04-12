@@ -64,7 +64,7 @@ router.get('/date',async (req, res) => {
 
 router.get('/sendMessages',async (req, res) => {
   res.status(200).json({s:'s'})
-  util.sendUpdate()
+  util.getUpdates()
 });
 router.post('/addDailyCases',async (req, res) => {
   try{
@@ -479,6 +479,11 @@ router.post('/messages',async (req, res) => {
               }
             }
             if(states.length!=0){
+              if((states.length==1)&&recvMsg.toLocaleLowerCase().includes("all districts"))
+              {
+                let d=await District.getDistrictsByState(states[0].name)
+                districts.push(...d)
+              }
               replyMsg+="*State Data* :\n\n";
               let ind=0;
               while(ind<states.length){

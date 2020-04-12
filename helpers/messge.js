@@ -34,14 +34,14 @@ exports.stateToMessage=(name,data,isNew=false)=>{
     let start = '';
     if(!isNew)
         start = "Current State Data for *"+name+"*:\n\n"
-    start += "Confirmed: "+data.total+"\nRecovered: "+data.rocovered+"\nDeaths: "+data.deaths
+    start += "Confirmed: "+data.total+"\nRecovered: "+data.rocovered+"\nDeaths: "+data.deaths+"\n";
     
     let recentTag = "\n\nThe last case reported was on "+data.lastreported.reportedOn
     +" in *" +data.lastreported.district
     +"* and is currently "+data.lastreported.status
     +".\nGender: "+data.lastreported.gender+"\n\n";
 
-    return isNew ? start+recentTag : start;
+    return isNew ? start : start;
 }
 exports.ending=(num,num2,t)=>{
     return `Till now there has been *${num}* confirmed cases in India and *${num-num2}* cases reported today.\n\n*_${advices[t]}_*`
@@ -75,4 +75,21 @@ exports.countryToMessage=(data)=>{
     +data.recovered+"\nDeaths: "
     +data.deaths+"\nActive cases: "
     +data.active
+}
+exports.stateDistricts=(districts)=>{
+    if((!(districts instanceof Array))||districts.length==0)
+    return "";
+    let msg="\nThe last reported case(s) were in ";
+    if(districts.length==1)
+    msg+=("*"+districts[0].name+"*\n\n")
+    else
+    districts.forEach((d,i)=>{
+        if(i==(districts.length-1))
+        msg+=("*"+d.name+"*\n\n")
+        else if(i==(districts.length-2))
+        msg+=("*"+d.name+"* and ")
+        else
+        msg+=("*"+d.name+"*, ")
+    })
+    return msg;
 }
