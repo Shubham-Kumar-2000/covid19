@@ -19,7 +19,8 @@ const path = require('path')
 exports.updateIndia=async()=>{
     try{
     let liveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})
-    liveOfficialData.total=liveOfficialData.statewise[0];
+    liveOfficialData.data={}
+    liveOfficialData.data.total=liveOfficialData.statewise[0];
     let lastIndiaData=await Config.findOne({active:true});
     await India.add(liveOfficialData.data.total.confirmed-lastIndiaData.con,liveOfficialData.data.total.recovered-lastIndiaData.rec,liveOfficialData.data.total.deaths-lastIndiaData.dead)
     lastIndiaData.con=liveOfficialData.data.total.confirmed;
