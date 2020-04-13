@@ -253,15 +253,12 @@ exports.getUpdates=async()=>{
             // district update ends
             if((state.lastRecorded!=live.data.stateData.total)){
                 let ds=await District.getDistrictsByState(name)
-                console.log(ds)
                 ds=await ds.filter(d=>{
                     let date=new Date(d.updatedAt)
                     let present=new Date()
                     let lastTenMinutes=new Date(present.getTime() - 10*60000);
-                    console.log(date>=lastTenMinutes)
                     return date>=lastTenMinutes
                 })
-                console.log(ds)
                 if(message.length<=0)
                 message+=Message.starting()
                 message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded,stateNames[i])+Message.stateToMessage(name,live,true)+Message.stateDistricts(ds))
@@ -275,10 +272,10 @@ exports.getUpdates=async()=>{
             }
             i+=1;
         };
-        // console.log("from 1")
+         console.log("from 1")
         if(message.length>0)
         {
-            // console.log("from here")
+            console.log("from here")
             message+=Message.ending(live.data.total,lastIndiaData.con,tagNum)
             try{
                 ChatApi.sendToAll(message);
