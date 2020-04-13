@@ -4,6 +4,7 @@ const User  = require('../Models/users');
 const Feedback  = require('../Models/feedback');
 const Menu = require('../Models/menu');
 const cmd = require('node-cmd');
+const ChatApi= require('../helpers/chatApi')
 /* GET users listing. */
 router.post('/addMenu', function(req, res, next) {
     Menu.findOne({$or:[{name: req.body.menu.name},{command:req.body.menu.command}]},(err,menu)=>{
@@ -54,6 +55,21 @@ router.get('/getMenu/:menuName', function(req, res, next) {
             });
         }
     })
+});
+
+router.post('/sendMessage',(req, res) => {
+    if(!(req.body.type && req.body.message))
+        return res.status(500).send('Request body problem...');
+    if(req.body.type == 'admin-only') {
+        ChatApi.sendToAdmin(req.body.message);
+        res.status(200).send('Message sent to admins only');
+    }
+    else if(req.body.type == 'everyone') {
+        ChatApi.sendToAll(req.body.message);
+        res.status(200).send('Message sent to all subscribers');
+    }
+    else
+        res.status(500).send('Message not sent to anyone, "type" is not matching with "admin-only" or "everyone"');
 });
 
 router.get('/total',async (req, res) => {

@@ -85,6 +85,39 @@ exports.sendToAll=async (message)=>{
         return false
     }
 }
+exports.sendToAdmins=async (message)=>{
+    try{
+        let users=await User.find({isAdmin:true}),i=0;
+
+        let hindimsg=message;
+        try{
+            let bb=await trans(message);
+            hindimsg=bb;
+        }
+        catch(e){
+            console.log(e)
+            hindimsg+='\n\nSorry our translator is not working.We will fix it soon.';
+        }
+        while(i<users.length){
+            let user=users[i],msg={body:message}
+            if(user.lang!='ENGLISH')
+            msg.body=hindimsg;
+            msg.phone=user.number;
+            this.sendmsg("DEV MODE ON, ONLY ADMINS\n\n"+msg,false).then(sent=>{
+                if(!sent)
+                console.log("Msg was not sent to : ",user.number)
+            }).catch(e=>{
+                console.log(e)
+            });
+            i+=1;
+        }
+        return true
+    }
+    catch(e){
+        console.log(e)
+        return false
+    }
+}
 
 /*{
     "phone": 919748669897,
