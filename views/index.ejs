@@ -28,7 +28,7 @@
         <h2 style="color: #c3b8ff;display: inline;">INDIA COVID-19 Case(s) of last 15 Days</h2>
       <img style="display:inline;height: 30px;position: relative;
       top: 5px;" src="https://images.newscientist.com/wp-content/uploads/2020/02/11165812/c0481846-wuhan_novel_coronavirus_illustration-spl.jpg"/></center><br/>
-      <div id="chart" style="margin: 5px;"></div>
+      <div style="margin: 5px;"><div id="chart" ></div></div>
       <br/>
       <div style="position: relative;">
       <img style="display:inline;height: 100px;position: absolute;
@@ -80,7 +80,7 @@
       return record.dead
     }).reverse())
     let render= async function(){
-      let colours=['#6e5a0a','#095f61','#610955','#4d5e08','#140857','#824703'];
+      let colours=['#6e5a0a','#095f61','#610955','#4d5e08','#140857','#824703','#000000'];
       document.getElementById('bg').style.backgroundColor=colours[Math.floor(Math.random() * colours.length)]
     let xData = ['x',...LastnDays()]
     var chart =await c3.generate({
