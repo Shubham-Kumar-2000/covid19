@@ -80,7 +80,7 @@
       return record.dead
     }).reverse())
     let render= async function(){
-      let colours=['#6e5a0a','#095f61','#610955','#4d5e08','#140857','#824703','#000000'];
+      let colours=['#6e5a0a','#095f61','#000000','#610955','#4d5e08','#140857','#824703'];
       document.getElementById('bg').style.backgroundColor=colours[Math.floor(Math.random() * colours.length)]
     let xData = ['x',...LastnDays()]
     var chart =await c3.generate({
