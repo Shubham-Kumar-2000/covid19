@@ -333,7 +333,6 @@ exports.getRecoveries=async()=>{
         //console.log('Hello');
         let message='';
         let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
-        let districtWiseData=await fetch("https://api.covid19india.org/state_district_wise.json").then(result=>{return result.json()})
         let justSendliveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})
         if((!(liveData.success)))
         throw "Api not responding"
@@ -369,7 +368,7 @@ exports.getRecoveries=async()=>{
             console.log("from here")
             message+=Message.endingRec(rec,tagNum)
             try{
-                await ChatApi.sendToAdmins(message);
+                await ChatApi.sendToAll(message);
                 return true
             }
             catch(e){
