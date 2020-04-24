@@ -16,16 +16,28 @@ const NewsFetch = new NewsAPI(process.env.NEWS_API_KEY);
 const puppeteer = require('puppeteer');
 const Config=require('../Models/Config')
 const path = require('path')
+
 exports.updateIndia=async()=>{
     try{
     let liveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})
     liveOfficialData.data={}
     liveOfficialData.data.total=liveOfficialData.statewise[0];
     let lastIndiaData=await Config.findOne({active:true});
-    await India.add(liveOfficialData.data.total.confirmed-lastIndiaData.con,liveOfficialData.data.total.recovered-lastIndiaData.rec,liveOfficialData.data.total.deaths-lastIndiaData.dead)
+    let last=await India.add(liveOfficialData.data.total.confirmed-lastIndiaData.con,liveOfficialData.data.total.recovered-lastIndiaData.rec,liveOfficialData.data.total.deaths-lastIndiaData.dead)
     lastIndiaData.con=liveOfficialData.data.total.confirmed;
     lastIndiaData.rec=liveOfficialData.data.total.recovered;
     lastIndiaData.dead=liveOfficialData.data.total.deaths;
+    let py=await shell.exec('python3 ./helpers/predictor.py '+last.con+" "+last.dead+" "+last.rec)
+    if(py.stderr)
+        throw py.stderr
+    py.stdout=py.stdout.split('\n').reverse()
+    let predicted={
+        con:parseInt(py.stdout[3].trim()),
+        dead:parseInt(py.stdout[2].trim()),
+        rec:parseInt(py.stdout[1].trim())
+    }
+    lastIndiaData.message=Message.chartCaption(lastIndiaData.predicted,predicted,last)
+    lastIndiaData.predicted=predicted;
     await lastIndiaData.save()
     const urlToCapture = process.env.BASEURL+'/graph'; 
     const outputFilePath = path.join(__dirname,"../public/chart.png");
@@ -45,18 +57,21 @@ exports.updateIndia=async()=>{
     }
     catch(e){
         console.log(e)
+        await ChatApi.sendToAdmins("Some error has occured : "+String(e))
     }
 }
 exports.sendUpdate=async()=>{
     try{
-        await ChatApi.sendFileToAll(process.env.BASEURL+'/chart.png',JSON.stringify(new Date()),'')
+        lastIndiaData=await Config.findOne({active:true});
+        await ChatApi.sendFileToAll(process.env.BASEURL+'/chart.png',JSON.stringify(new Date()),lastIndiaData.message)
     }catch(e){
         console.log(e)
     }
 }
 exports.sendUpdateAdmin=async()=>{
     try{
-        await ChatApi.sendFileToAdmin(process.env.BASEURL+'/chart.png',JSON.stringify(new Date()),'')
+        let lastIndiaData=await Config.findOne({active:true});
+        await ChatApi.sendFileToAdmin(process.env.BASEURL+'/chart.png',JSON.stringify(new Date()),lastIndiaData.message)
     }catch(e){
         console.log(e)
     }
@@ -263,13 +278,13 @@ exports.getUpdates=async()=>{
                 if(message.length<=0)
                 message+=Message.starting()
                 message+=(Message.stateToMessageFormList(live.data.stateData.total-state.lastRecorded,stateNames[i])+Message.stateToMessage(name,live,true)+Message.stateDistricts(ds))
-                state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
+                state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths,state.lastRecordedRec)
             }
             else if((state.lastRecordedDeaths!=live.data.stateData.deaths)&&((state.lastRecordedDeaths-live.data.stateData.deaths)<0)){
                 if(message.length<=0)
                 message+=Message.starting()
                 message+=(Message.stateToMessageDeaths(live.data.stateData.deaths-state.lastRecordedDeaths,stateNames[i])+Message.stateToMessage(name,live,true))
-                state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths)
+                state=await State.updateState(name,live.data.stateData.total,live.data.stateData.deaths,state.lastRecordedRec)
             }
             i+=1;
         };
@@ -310,6 +325,73 @@ exports.getUpdates=async()=>{
     }
     
 }
+
+
+
+exports.getRecoveries=async()=>{
+    try{
+        //console.log('Hello');
+        let message='';
+        let liveData=await fetch("https://api.rootnet.in/covid19-in/unofficial/covid19india.org").then(result=>{return result.json()})
+        let districtWiseData=await fetch("https://api.covid19india.org/state_district_wise.json").then(result=>{return result.json()})
+        let justSendliveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})
+        if((!(liveData.success)))
+        throw "Api not responding"
+        liveData=liveData.data;
+        liveData.success=true
+        let states=stateCasesCounter(liveData.rawPatientData);
+        let stateNames=Object.keys(states),i=0;let live;
+        let lastIndiaData=await Config.findOne({active:true});
+        if(!lastIndiaData) lastIndiaData=0;
+        let min = Math.ceil(0);
+        let max = Math.floor(23);
+        let tagNum = Math.floor(Math.random() * (max - min + 1)) + min;
+        let rec=0;
+        while(i<stateNames.length){
+            let name=stateNames[i];
+            if((!name)||name==''||name=='undefined'||name=='null')
+            {i+=1;continue;}
+            let state=await State.getStateByName(name);
+            if(!(state))
+            state=await State.addNew(name)
+            live= await this.getStateDataFromUpdates(name,liveData,justSendliveOfficialData);
+            if((state.lastRecordedRec!=live.data.stateData.rocovered)&&((state.lastRecordedRec-live.data.stateData.rocovered)<0)){
+                if(message.length<=0)
+                message+=Message.startingRec()
+                message+=(Message.stateToMessageRec(live.data.stateData.rocovered-state.lastRecordedRec,stateNames[i])+Message.stateToMessage(name,live,true))
+                state=await State.updateState(name,state.lastRecorded,state.lastRecordedDeaths,live.data.stateData.rocovered)
+            }
+            rec+=state.lastRecordedRec
+            i+=1;
+        };
+        if(message.length>0)
+        {
+            console.log("from here")
+            message+=Message.endingRec(rec,tagNum)
+            try{
+                await ChatApi.sendToAdmins(message);
+                return true
+            }
+            catch(e){
+                console.log(e)
+                return false
+            }
+        }
+    }
+    catch(e){
+        console.log(e)
+    }
+    
+}
+
+
+
+
+
+
+
+
+
 
 
 

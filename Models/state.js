@@ -14,6 +14,11 @@ const stateSchema =new Schema({
         type:Number,
         require:true,
         default:0
+    },
+    'lastRecordedRec':{
+        type:Number,
+        require:true,
+        default:0
     }
 },{timestamps:true});
 stateSchema.index({ name: 'text' });
@@ -27,9 +32,9 @@ stateSchema.statics.getAllStates=()=>{
 stateSchema.statics.getStateByName=(name)=>{
     return State.findOne({name: name})
 }
-stateSchema.statics.updateState=(name,num,dead)=>{
+stateSchema.statics.updateState=(name,num,dead,rec)=>{
     return State
-        .findOneAndUpdate({name: name}, { $set: { lastRecorded: num,lastRecordedDeaths:dead } }, {new: true} )
+        .findOneAndUpdate({name: name}, { $set: { lastRecorded: num,lastRecordedDeaths:dead,lastRecordedRec:rec } }, {new: true} )
 }
 stateSchema.statics.search = function(text){
     let txt=text.split(" ")

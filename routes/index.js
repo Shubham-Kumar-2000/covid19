@@ -13,12 +13,58 @@ const Feedback  = require('../Models/feedback');
 const India = require('../Models/india')
 const Country=require('../Models/country')
 const Config=require('../Models/Config')
+const {spawn} = require('child_process');
 var  translate = require("translate");
 const puppeteer = require('puppeteer');
 translate.engine = 'yandex';
 translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d01d4686738afe4c60be3a';
 translate.from = 'hi';
 var Plotlib = require('nodeplotlib');
+let  shell = require('shelljs');
+
+
+router.get('/shubham', async(req, res) => {
+ try{
+  let py=await shell.exec('python3 routes/predictor.py 1521 63 427')
+  if(py.stderr)
+    throw py.stderr
+  parseInt
+  py.stdout=py.stdout.split('\n')
+  let predicted={
+    conf:parseInt(py.stdout[0].trim()),
+    dead:parseInt(py.stdout[1].trim()),
+    rec:parseInt(py.stdout[2].trim())
+  }
+  res.json({out:predicted})
+ }
+ catch(e){
+   console.log(e)
+   res.send(e)
+ }
+ })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.post('/createConfig',async(req, res) => {
   let data=new Config({con:req.body.con,rec:req.body.rec,dead:req.body.dead})
   res.send(await data.save())
@@ -104,8 +150,28 @@ router.get('/updateGraph',async (req, res) => {
   
 
 });
-router.get('/ppt',(req,res)=>{
-  res.sendFile(path.join(__dirname,'../example.png'));
+router.get('/ppt',async(req,res)=>{
+  let liveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})
+    liveOfficialData.data={}
+    liveOfficialData.data.total=liveOfficialData.statewise[0];
+    let lastIndiaData=await Config.findOne({active:true});
+    let last=await India.add(liveOfficialData.data.total.confirmed-lastIndiaData.con,liveOfficialData.data.total.recovered-lastIndiaData.rec,liveOfficialData.data.total.deaths-lastIndiaData.dead)
+    lastIndiaData.con=liveOfficialData.data.total.confirmed;
+    lastIndiaData.rec=liveOfficialData.data.total.recovered;
+    lastIndiaData.dead=liveOfficialData.data.total.deaths;
+    let py=await shell.exec('python3 ./helpers/predictor.py '+last.con+" "+last.dead+" "+last.rec)
+    if(py.stderr)
+        throw py.stderr
+    py.stdout=py.stdout.split('\n').reverse()
+    let predicted={
+        con:parseInt(py.stdout[3].trim()),
+        dead:parseInt(py.stdout[2].trim()),
+        rec:parseInt(py.stdout[1].trim())
+    }
+    lastIndiaData.message=Message.chartCaption(predicted,last)
+    lastIndiaData.predicted=predicted;
+    res.json({lastIndiaData,last})
+    //await lastIndiaData.save()
 })
 router.get('/show',async (req, res) => {
   util.updateIndia().then(r=>{

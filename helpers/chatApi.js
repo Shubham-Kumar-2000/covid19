@@ -99,11 +99,11 @@ exports.sendToAdmins=async (message)=>{
             hindimsg+='\n\nSorry our translator is not working.We will fix it soon.';
         }
         while(i<users.length){
-            let user=users[i],msg={body:message}
+            let user=users[i],msg={body:"DEV MODE ON, ONLY ADMINS\n\n"+message}
             if(user.lang!='ENGLISH')
             msg.body=hindimsg;
             msg.phone=user.number;
-            this.sendmsg("DEV MODE ON, ONLY ADMINS\n\n"+msg,false).then(sent=>{
+            this.sendmsg(msg,false).then(sent=>{
                 if(!sent)
                 console.log("Msg was not sent to : ",user.number)
             }).catch(e=>{

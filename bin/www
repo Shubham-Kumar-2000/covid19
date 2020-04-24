@@ -71,6 +71,13 @@ if(process.env.CLUSTER === 'yes') {
         console.log(e)
       }
     })
+    let sendRecoveries=schedule.scheduleJob('*/45 * * * *',async function(){
+      try{
+        await Utills.getRecoveries()
+      }catch(e){
+        console.log(e)
+      }
+    })
 		// Fork workers.
 		for (let i = 0; i < numCPUs; i++) {
 			cluster.fork();

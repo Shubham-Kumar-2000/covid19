@@ -34,7 +34,7 @@ exports.stateToMessage=(name,data,isNew=false)=>{
     let start = '';
     if(!isNew)
         start = "Current State Data for *"+name+"*:\n\n"
-    start += "Confirmed: "+data.total+"\nRecovered: "+data.rocovered+"\nDeaths: "+data.deaths+"\n";
+    start += "Confirmed: "+data.total+"\nRecovered: "+data.rocovered+"\nDeaths: "+data.deaths+"\n\n";
     
     let recentTag = "\n\nThe last case reported was on "+data.lastreported.reportedOn
     +" in *" +data.lastreported.district
@@ -46,6 +46,12 @@ exports.stateToMessage=(name,data,isNew=false)=>{
 exports.ending=(num,num2,t)=>{
     return `Till now there has been *${num}* confirmed cases in India and *${num-num2}* cases reported today.\n\n*_${advices[t]}_*`
 }
+
+exports.endingRec=(num,t)=>{
+    return `Woohoo!!! *${num}* pepole has already recoverd in India.\n\n*_${advices[t]}_*`
+}
+
+
 exports.stateToMessageFormList=(diff,name)=>{
     if(diff>0)
     return `New *${diff} Positive* Case(s) detected in ${name}. Current Statistics:\n\n`
@@ -60,7 +66,7 @@ exports.starting=()=>{
     let d = new Date();
     let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
-    return "*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
+    return "🛑🛑🛑🛑🛑🛑\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
 }
 
 exports.DistrictToMessage=(districtData)=>{
@@ -79,7 +85,7 @@ exports.countryToMessage=(data)=>{
 exports.stateDistricts=(districts)=>{
     if((!(districts instanceof Array))||districts.length==0)
     return "";
-    let msg="\nThe last reported case(s) were in ";
+    let msg="The last reported case(s) were in ";
     if(districts.length==1)
     msg+=("*"+districts[0].name+"*\n\n")
     else
@@ -92,4 +98,17 @@ exports.stateDistricts=(districts)=>{
         msg+=("*"+d.name+"*, ")
     })
     return msg;
+}
+exports.chartCaption=(prediction,real)=>{
+    return "Yesterday there were "+real.con+" confirmed cases in India while "+real.rec+" people recoverd and "+real.dead+" died due to COVID-19.\n\nBased on our analysis, Pedictions for today :\nConfirmed Case(s): "+(prediction.con>0?prediction.con:"*None*")+"\nRecoveries : "+(prediction.rec>0?prediction.rec:"*None*")+"\nDeath(s): "+(prediction.dead>0?prediction.dead:"*None*");
+}
+exports.stateToMessageRec=(diff,name)=>{
+    return `New *${diff} pattient(s) Recovered* in ${name}. Current Statistics:\n\n`
+}
+exports.startingRec=()=>{
+    var indiaTime = new Date();
+    let d = new Date();
+    let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
+    let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
+    return "🟩🟩🟩🟩🟩🟩\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
 }
