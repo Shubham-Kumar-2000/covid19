@@ -16,7 +16,7 @@ const NewsFetch = new NewsAPI(process.env.NEWS_API_KEY);
 const puppeteer = require('puppeteer');
 const Config=require('../Models/Config')
 const path = require('path')
-
+let  shell = require('shelljs');
 exports.updateIndia=async()=>{
     try{
     let liveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})
