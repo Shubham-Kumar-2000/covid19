@@ -36,7 +36,7 @@ exports.updateIndia=async()=>{
         dead:parseInt(py.stdout[2].trim()),
         rec:parseInt(py.stdout[1].trim())
     }
-    lastIndiaData.message=Message.chartCaption(lastIndiaData.predicted,predicted,last)
+    lastIndiaData.message=Message.chartCaption(predicted,last)
     lastIndiaData.predicted=predicted;
     await lastIndiaData.save()
     const urlToCapture = process.env.BASEURL+'/graph'; 
