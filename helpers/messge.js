@@ -103,7 +103,7 @@ exports.chartCaption=(prediction,real)=>{
     return "Yesterday there were "+real.con+" confirmed cases in India while "+real.rec+" people recoverd and "+real.dead+" died due to COVID-19.\n\nBased on our analysis, Pedictions for today :\nConfirmed Case(s): "+(prediction.con>0?prediction.con:"*None*")+"\nRecoveries : "+(prediction.rec>0?prediction.rec:"*None*")+"\nDeath(s): "+(prediction.dead>0?prediction.dead:"*None*");
 }
 exports.stateToMessageRec=(diff,name)=>{
-    return `New *${diff} pattient(s) Recovered* in ${name}. Current Statistics:\n\n`
+    return `New *${diff} patient(s) Recovered* in ${name}. Current Statistics:\n\n`
 }
 exports.startingRec=()=>{
     var indiaTime = new Date();

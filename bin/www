@@ -71,7 +71,7 @@ if(process.env.CLUSTER === 'yes') {
         console.log(e)
       }
     })
-    let sendRecoveries=schedule.scheduleJob('*/45 * * * *',async function(){
+    let sendRecoveries=schedule.scheduleJob('45 * * * *',async function(){
       try{
         await Utills.getRecoveries()
       }catch(e){
