@@ -229,7 +229,7 @@ router.post('/messages',async (req, res) => {
       if(message.type!="chat"){
         ChatApi.sendmsg({
           phone:user.number,
-          body:"This service is only valid for text messages and locations.\n\nPlease don't send unnecessary messages."
+          body:"This service is only accepts text messages and locations.\n\nPlease don't send unnecessary messages."
         },user.lang!='ENGLISH');
         i+=1;continue;
       }
