@@ -21,7 +21,7 @@ translate.key = 'trnsl.1.1.20200404T172911Z.8807c71a358478e0.5b8c7874935ed24a13d
 translate.from = 'hi';
 var Plotlib = require('nodeplotlib');
 let  shell = require('shelljs');
-
+let Location=require('../helpers/location')
 
 router.get('/shubham', async(req, res) => {
  try{
@@ -218,6 +218,21 @@ router.post('/messages',async (req, res) => {
         user.active=true;
         user = await user.save();
       }
+      if(message.type=="location"){
+        recvMsg=recvMsg.split(';')
+        await Location.calculate({
+          latitude: recvMsg[0],
+          longitude: recvMsg[1],
+      },user)
+        i+=1;continue;
+      }
+      if(message.type!="chat"){
+        ChatApi.sendmsg({
+          phone:user.number,
+          body:"This service is only valid for text messages and locations.\n\nPlease don't send unnecessary messages."
+        },user.lang!='ENGLISH');
+        i+=1;continue;
+      }
       if(isNaN(recvMsg)&&(user.lang!='ENGLISH'))
       { 
         try{
@@ -308,7 +323,7 @@ router.post('/messages',async (req, res) => {
             },user.lang!='ENGLISH')
             let updateUser=await User.setLastServedMenuName(user.number,"countryMenu");
           }
-          else if(choice >= 3 && choice <= 7){
+          else if(choice >= 3 && choice <= 10){
             let menu= await Menu.findOne({name:"baseMenu"})
             if(choice == 6) {
               replyMsg = "*Language Options* :\n\n1. *English* \n2. *Hindi*";
@@ -333,13 +348,30 @@ router.post('/messages',async (req, res) => {
               },user.lang!='ENGLISH')
               let updateUser=await User.setLastServedMenuName(user.number,"");
             }
+            else if(choice==7){
+              let yesterday=await India.recent()
+              yesterday=yesterday[0];
+              ChatApi.sendmsg({
+                phone:user.number,
+                body:Message.yesterdayToMessage(yesterday)
+              },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,"");
+            }
+            else if(choice==8){
+              let predicted=await Config.findOne({active:true})
+              ChatApi.sendmsg({
+                phone:user.number,
+                body:Message.predictionToMessage(predicted.predicted)
+              },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,"");
+            }
             else{
-             ChatApi.sendmsg({
-              phone:user.number,
-              body:menu.options[choice-1].output.split(';').join('\n')
-            },user.lang!='ENGLISH')
-            let updateUser=await User.setLastServedMenuName(user.number,choice == 7 ? "feedback" : "");
-          }
+              ChatApi.sendmsg({
+                phone:user.number,
+                body:menu.options[choice-1].output.split(';').join('\n')
+              },user.lang!='ENGLISH')
+              let updateUser=await User.setLastServedMenuName(user.number,choice == 10 ? "feedback" : "");
+            }
           }
           else{
             let menu= await Menu.findOne({name:"baseMenu"})
@@ -523,8 +555,17 @@ router.post('/messages',async (req, res) => {
           let states=await State.search(recvMsg);
           let districts=await District.search(recvMsg);
           let countries=await Country.search(recvMsg);
-          if(states.length!=0||districts.length!=0||countries.length!=0||recvMsg.toLocaleLowerCase().includes("news")){
+          if(states.length!=0||districts.length!=0||countries.length!=0||recvMsg.toLocaleLowerCase().includes("news")||recvMsg.toLocaleLowerCase().includes("prediction")||recvMsg.toLocaleLowerCase().includes("yesterday")){
             replyMsg="Some Data based on our understanding of your msg....\n\n";
+            if(recvMsg.toLocaleLowerCase().includes("yesterday")){
+              let yesterday=await India.recent()
+              yesterday=yesterday[0];
+              replyMsg +=("*Last Day's Data* :\n\n"+Message.yesterdayToMessage(yesterday))
+            }
+            if(recvMsg.toLocaleLowerCase().includes("prediction")){
+              let predicted=await Config.findOne({active:true})
+              replyMsg +=("*Predicted Data* :\n\n"+Message.predictionToMessage(predicted.predicted))
+            }
             if(recvMsg.toLocaleLowerCase().includes("news")){
               replyMsg+="*Latest News* :\n\n";
               let news =await News.getAllNews();

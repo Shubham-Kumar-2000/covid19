@@ -66,7 +66,7 @@ exports.starting=()=>{
     let d = new Date();
     let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
-    return "🛑🛑🛑🛑🛑🛑\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
+    return "🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
 }
 
 exports.DistrictToMessage=(districtData)=>{
@@ -100,8 +100,15 @@ exports.stateDistricts=(districts)=>{
     return msg;
 }
 exports.chartCaption=(prediction,real)=>{
-    return "Yesterday there were "+real.con+" confirmed cases in India while "+real.rec+" people recoverd and "+real.dead+" died due to COVID-19.\n\nBased on our analysis, Pedictions for today :\nConfirmed Case(s): "+(prediction.con>0?prediction.con:"*None*")+"\nRecoveries : "+(prediction.rec>0?prediction.rec:"*None*")+"\nDeath(s): "+(prediction.dead>0?prediction.dead:"*None*");
+    return this.yesterdayToMessage(real)+"\n\n"+this.predictionToMessage(prediction);
 }
+exports.yesterdayToMessage=(real)=>{
+    return "Yesterday there were "+real.con+" confirmed cases in India while "+real.rec+" people recoverd and "+real.dead+" died due to COVID-19."
+}
+exports.predictionToMessage=(prediction)=>{
+    return "Based on our analysis, Pedictions for today :\nConfirmed Case(s): "+(prediction.con>0?prediction.con:"*None*")+"\nRecoveries : "+(prediction.rec>0?prediction.rec:"*None*")+"\nDeath(s): "+(prediction.dead>0?prediction.dead:"*None*");
+}
+
 exports.stateToMessageRec=(diff,name)=>{
     return `New *${diff} patient(s) Recovered* in ${name}. Current Statistics:\n\n`
 }
@@ -110,5 +117,8 @@ exports.startingRec=()=>{
     let d = new Date();
     let dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', meridian: 'full' }) 
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
-    return "🟩🟩🟩🟩🟩🟩\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
+    return "🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
+}
+exports.distanceToMessage=(dist,state,area)=>{
+    return "You are "+((dist/2000).toFixed(2))+" KM away from a infected area "+area+" in the state of "+state+"\n\nStay at Home,\nStay Safe";
 }
