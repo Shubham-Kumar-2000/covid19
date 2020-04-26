@@ -560,11 +560,11 @@ router.post('/messages',async (req, res) => {
             if(recvMsg.toLocaleLowerCase().includes("yesterday")){
               let yesterday=await India.recent()
               yesterday=yesterday[0];
-              replyMsg +=("*Last Day's Data* :\n\n"+Message.yesterdayToMessage(yesterday))
+              replyMsg +=("*Last Day's Data* :\n\n"+Message.yesterdayToMessage(yesterday)+"\n\n")
             }
             if(recvMsg.toLocaleLowerCase().includes("prediction")){
               let predicted=await Config.findOne({active:true})
-              replyMsg +=("*Predicted Data* :\n\n"+Message.predictionToMessage(predicted.predicted))
+              replyMsg +=("*Predicted Data* :\n\n"+Message.predictionToMessage(predicted.predicted)+"\n\n")
             }
             if(recvMsg.toLocaleLowerCase().includes("news")){
               replyMsg+="*Latest News* :\n\n";
