@@ -27,7 +27,7 @@ exports.updateIndia=async()=>{
     lastIndiaData.con=liveOfficialData.data.total.confirmed;
     lastIndiaData.rec=liveOfficialData.data.total.recovered;
     lastIndiaData.dead=liveOfficialData.data.total.deaths;
-    let py=await shell.exec('python3 ./helpers/predictor.py '+last.con+" "+last.dead+" "+last.rec)
+    let py=await shell.exec('python3 -W ignore ./helpers/predictor.py '+last.con+" "+last.dead+" "+last.rec)
     if(py.stderr)
         throw py.stderr
     py.stdout=py.stdout.split('\n').reverse()
