@@ -70,7 +70,19 @@ exports.starting=()=>{
 }
 
 exports.DistrictToMessage=(districtData)=>{
-    return `There are *${districtData.confirmedCases} confirmed* cases in *${districtData.name}* district under *${districtData.stateName}* state.`;
+    let m= `There are *${districtData.confirmedCases} confirmed* cases in *${districtData.name}* district under *${districtData.stateName}* state.`;
+    if(districtData.zone&&districtData.zone!=""&&districtData.zone!=" "){
+        if(districtData.zone=="green"){
+            m+="\n\n*Zone* : 🟢🟢🟢"
+        }
+        else if(districtData.zone=="red"){
+            m+="\n\n*Zone* : 🔴🔴🔴"
+        }
+        else if(districtData.zone=="orange"){
+            m+="\n\n*Zone* : 🟠🟠🟠"
+        }
+    }
+    return m
 }
 exports.searchState=(state)=>{
     return "\nIn *"+state.name+"* there are *"+state.lastRecorded+"* confirmed COVID-19 case(s) from which *"+state.lastRecordedDeaths+"* people died.\n\n";
@@ -119,6 +131,18 @@ exports.startingRec=()=>{
     let [{ value: mo },,{ value: da },,{ value: ye },,{ value: hh },,{ value: mm },,{ value: ss },,{ value: ap }] = dtf.formatToParts(d) 
     return "🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩\n*New Update* : "+da+'-'+mo+'-'+ye+", "+hh+':'+mm+" "+ap+"\n\n\n";
 }
-exports.distanceToMessage=(dist,state,area)=>{
-    return "You are "+((dist/2000).toFixed(2))+" KM away from a infected area "+area+" in the state of "+state+"\n\nStay at Home,\nStay Safe";
+exports.distanceToMessage=(dist,state,area,district)=>{
+    let m= "You are "+((dist/2000).toFixed(2))+" KM away from a infected area ";
+    if(district&&district.zone&&district.zone!=""&&district.zone!=" "){
+        if(district.zone=="green"){
+            area="🟢"+area+"🟢"
+        }
+        else if(district.zone=="red"){
+            area="🔴"+area+"🔴"
+        }
+        else if(district.zone=="orange"){
+            area="🟠"+area+"🟠"
+        }
+    }
+    m+=area+" in the state of "+state+"\n\nStay at Home,\nStay Safe";
 }

@@ -17,6 +17,18 @@ const puppeteer = require('puppeteer');
 const Config=require('../Models/Config')
 const path = require('path')
 let  shell = require('shelljs');
+exports.updateZones=async()=>{
+    try{
+        let districtData=await fetch("https://api.covid19india.org/zones.json").then(result=>{return result.json()})
+        districtData=districtData.zones;
+        for(d of districtData){
+            await District.setZone(d.district,d.state,d.zone)
+        }
+    }catch(e){
+        console.log(e)
+        await ChatApi.sendToAdmins("Some error has occured in zones  : "+String(e))
+    }
+}
 exports.updateIndia=async()=>{
     try{
     let liveOfficialData=await fetch("https://api.covid19india.org/data.json").then(result=>{return result.json()})

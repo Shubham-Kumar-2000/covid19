@@ -14,6 +14,10 @@ const districtSchema =new Schema({
     'stateName':{
         type:String,
         default:"Unknown"
+    },
+    'zone':{
+        type:String,
+        default:""
     }
 },{timestamps:true});
 districtSchema.index({ name: 'text' });
@@ -117,6 +121,17 @@ districtSchema.statics.search = function(text){
         }
     
     })
+}
+districtSchema.statics.setZone = async (districtName,state,zone)=>{
+    let district=null;
+    district = await District.findOne({'name':districtName,'stateName':state});
+    if(!district){
+        district=new District({
+            'name':districtName,'stateName':state
+        })
+    }
+    district.zone=zone.toLowerCase()
+    return district.save()
 }
 
 const District = module.exports = mongoose.model('District', districtSchema);

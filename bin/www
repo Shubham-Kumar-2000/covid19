@@ -78,6 +78,13 @@ if(process.env.CLUSTER === 'yes') {
         console.log(e)
       }
     })
+    let setZones=schedule.scheduleJob('35 3 * * 0',async function(){
+      try{
+        await Utills.updateZones()
+      }catch(e){
+        console.log(e)
+      }
+    })
 		// Fork workers.
 		for (let i = 0; i < numCPUs; i++) {
 			cluster.fork();

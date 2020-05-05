@@ -1,7 +1,8 @@
 const geolib = require('geolib');
 const fetch = require("node-fetch");
 const ChatApi=require('./chatApi')
-const Message=require('./messge')
+const Message=require('./messge');
+const District=require('../Models/district');
 exports.calculate=async(userLoc,user)=>{
     try{
         let distsLoc=await fetch("https://files.indiasmile.xyz/cache/infectedDistricts.json").then(result=>{return result.json()})
@@ -18,9 +19,10 @@ exports.calculate=async(userLoc,user)=>{
                 area=disName;
             }
         }
+        let district=await District.getDistrictByName(area,state)
         ChatApi.sendmsg({
             phone:user.number,
-            body:Message.distanceToMessage(min,state,area)
+            body:Message.distanceToMessage(min,state,area,district)
           },user.lang!='ENGLISH')
     }
     catch(e){
