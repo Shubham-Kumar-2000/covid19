@@ -145,4 +145,5 @@ exports.distanceToMessage=(dist,state,area,district)=>{
         }
     }
     m+=area+" in the state of "+state+"\n\nStay at Home,\nStay Safe";
+    return m;
 }
