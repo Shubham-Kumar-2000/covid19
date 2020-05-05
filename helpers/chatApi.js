@@ -43,6 +43,7 @@ exports.sendmsg=async (msg,change)=>{
         
         if(!(sentMessage.sent))
         {
+            console.log(sentMessage)
             throw "An error from chatApi occured"
         }
         return true
