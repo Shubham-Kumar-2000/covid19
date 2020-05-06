@@ -39,7 +39,7 @@ exports.sendmsg=async (msg,change)=>{
                 msg.body+='\n\nSorry our translator is not working.We will fix it soon.';
             }
         }
-        let sentMessage=await request.post("https://eu86.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
+        let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendMessage?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
         
         if(!(sentMessage.sent))
         {
@@ -143,7 +143,7 @@ exports.sendFile=async (msg,change)=>{
                 msg.caption+='\n\nSorry our translator is not working.We will fix it soon.';
             }
         }
-        let sentMessage=await request.post("https://eu86.chat-api.com"+process.env.CHAT_API_INSTANCE+"/sendFile?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
+        let sentMessage=await request.post("https://api.chat-api.com/"+process.env.CHAT_API_INSTANCE+"/sendFile?token="+process.env.CHAT_API_TOKEN,{json: true, body: msg})
         //console.log(sentMessage)
         if(!(sentMessage.sent))
         {
