@@ -306,7 +306,7 @@ exports.getUpdates=async()=>{
             console.log("from here")
             message+=Message.ending(live.data.total,lastIndiaData.con,tagNum)
             try{
-                ChatApi.sendToAll(message);
+                await ChatApi.sendToAll(message);
                 return true
             }
             catch(e){
