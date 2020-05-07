@@ -21,70 +21,21 @@ if(process.env.CLUSTER === 'yes') {
 	const numCPUs = require('os').cpus().length;
 
 	if (cluster.isMaster) {
-		// // //console.log('Starting app in cluster mode with '+numCPUs+ ' workers');
-    // // //console.log(`Master ${process.pid} is running`);
-    let updates=schedule.scheduleJob('*/'+process.env.UPDATE_INTERVAL+' * * * *',async function(){
-      //console.log("Checking for Update... Time now: ",new Date().toString())
-       try{
-         let message = await Utills.getUpdates()
-       //console.log(message+" Time now: ",new Date().toString());
-       }
-       catch(e){
-       //console.log(e)
-       }
-      /*Utills.getUpdates().then(data => {
-        //console.log("d",data);
-      }).catch(err=>{//console.log("e",err)});*/
-    })
-    let updates2=schedule.scheduleJob('15 */2 * * *',async function(){
-      //console.log("Checking for Update... Time now: ",new Date().toString())
-       try{
-         let message = await Utills.updateDB()
-       //console.log(message+" Time now: ",new Date().toString());
-       }
-       catch(e){
-       console.log(e)
-       }
-      /*Utills.getUpdates().then(data => {
-        //console.log("d",data);
-      }).catch(err=>{//console.log("e",err)});*/
-    })
-    let indiaUpdate=schedule.scheduleJob('0 0 * * *',async function(){
-      try{
-        await Utills.updateIndia()
-      }catch(e){
-        console.log(e)
-      }
-    })
-    let sendUpdateAdmin=schedule.scheduleJob('20 1 * * *',async function(){
-      try{
-        console.log("sending Admins")
-        await Utills.sendUpdateAdmin()
-      }catch(e){
-        console.log(e)
-      }
-    })
-    let sendUpdate=schedule.scheduleJob('0 9 * * *',async function(){
-      try{
-        await Utills.sendUpdate()
-      }catch(e){
-        console.log(e)
-      }
-    })
-    let sendRecoveries=schedule.scheduleJob('45 * * * *',async function(){
-      try{
-        await Utills.getRecoveries()
-      }catch(e){
-        console.log(e)
-      }
-    })
-    let setZones=schedule.scheduleJob('35 3 * * 0',async function(){
-      try{
-        await Utills.updateZones()
-      }catch(e){
-        console.log(e)
-      }
-    })
+    /*
+    
+    
+    
+    
+    
+    *****************************************************************************
+                              Removing all cron jobs
+    *****************************************************************************
+
+
+
+    */
+	  console.log('Starting app in cluster mode with '+numCPUs+ ' workers');
+    console.log(`Master ${process.pid} is running`);
 		// Fork workers.
 		for (let i = 0; i < numCPUs; i++) {
 			cluster.fork();
