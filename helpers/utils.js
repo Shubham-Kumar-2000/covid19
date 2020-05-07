@@ -306,7 +306,13 @@ exports.getUpdates=async()=>{
             console.log("from here")
             message+=Message.ending(live.data.total,lastIndiaData.con,tagNum)
             try{
-                await ChatApi.sendToAll(message);
+                let all=await request.post(process.env.BASEURL+'/admin/sendMessage',{
+                    json: true, 
+                    body: {
+                      "typ":"everyone",
+                      "message":message
+                      }});
+                  //await ChatApi.sendToAll(message);
                 return true
             }
             catch(e){
@@ -380,7 +386,13 @@ exports.getRecoveries=async()=>{
             console.log("from here")
             message+=Message.endingRec(rec,tagNum)
             try{
-                await ChatApi.sendToAll(message);
+                let all=await request.post(process.env.BASEURL+'/admin/sendMessage',{
+                  json: true, 
+                  body: {
+                    "typ":"everyone",
+                    "message":message
+                    }});
+                //await ChatApi.sendToAll(message);
                 return true
             }
             catch(e){

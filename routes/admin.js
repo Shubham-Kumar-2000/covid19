@@ -58,18 +58,18 @@ router.get('/getMenu/:menuName', function(req, res, next) {
 });
 
 router.post('/sendMessage',(req, res) => {
-    if(!(req.body.type && req.body.message))
+    if(!(req.body.typ && req.body.message))
         return res.status(500).send('Request body problem...');
-    if(req.body.type == 'admin-only') {
-        ChatApi.sendToAdmin(req.body.message);
+    if(req.body.typ == 'admin-only') {
+        ChatApi.sendToAdmins(req.body.message);
         res.status(200).send('Message sent to admins only');
     }
-    else if(req.body.type == 'everyone') {
+    else if(req.body.typ == 'everyone') {
         ChatApi.sendToAll(req.body.message);
         res.status(200).send('Message sent to all subscribers');
     }
     else
-        res.status(500).send('Message not sent to anyone, "type" is not matching with "admin-only" or "everyone"');
+        res.status(500).send('Message not sent to anyone, "typ" is not matching with "admin-only" or "everyone"');
 });
 
 router.get('/total',async (req, res) => {

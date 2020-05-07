@@ -71,9 +71,12 @@ exports.sendToAll=async (message)=>{
             if(user.lang!='ENGLISH')
             msg.body=hindimsg;
             msg.phone=user.number;
-            let sent=await this.sendmsg(msg,false)
-            if(!sent)
+            this.sendmsg(msg,false).then(sent=>{
+                if(!sent)
                 console.log("Msg was not sent to : ",user.number)
+            }).catch(e=>{
+                console.log(e)
+            });
             i+=1;
         }
         return true
