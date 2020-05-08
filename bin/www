@@ -36,6 +36,13 @@ if(process.env.CLUSTER === 'yes') {
     */
 	  console.log('Starting app in cluster mode with '+numCPUs+ ' workers');
     console.log(`Master ${process.pid} is running`);
+    let indiaUpdate=schedule.scheduleJob('0 0 * * *',async function(){
+      try{
+        await Utills.updateIndia()
+      }catch(e){
+        console.log(e)
+      }
+    })
 		// Fork workers.
 		for (let i = 0; i < numCPUs; i++) {
 			cluster.fork();
