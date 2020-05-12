@@ -24,7 +24,7 @@ tests=tests['testing']['values']
 l=len(tests)
 tests=list(filter(validTest,tests))
 data = [x*15 + random()*5 for x in range(1, 23)]
-tests=list(map(lambda a: int(a[2]), tests))
+tests=list(map(lambda a: int(a[2].replace(',', '')), tests))
 data.extend(tests)
 model = SARIMAX(data, order=(1, 1, 1), seasonal_order=(0, 0, 0, 0))
 model_fit = model.fit(disp=False)
