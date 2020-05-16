@@ -35,6 +35,9 @@ data = list()
 for i in range(len(dailycases)):
     row = [dailyConf[i], dailyDead[i],dailyRec[i],math.sqrt(tests[i])]
     data.append(row)
+if(data[len(data)-1][0]==0):
+    data.pop()
+    tests.pop()
 # fit model
 arg=sys.argv[1:]
 for i in range(len(arg)):
