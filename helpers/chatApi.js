@@ -55,7 +55,7 @@ exports.sendmsg=async (msg,change)=>{
 }
 exports.sendToAll=async (message)=>{
     try{
-        let users=await User.find({'active':true}),i=0;
+        let users=await User.find({'active':true});
 
         let hindimsg=message;
         try{
@@ -66,22 +66,32 @@ exports.sendToAll=async (message)=>{
             console.log(e)
             hindimsg+='\n\nSorry our translator is not working.We will fix it soon.';
         }
-        await Promise.all(
-            users.map(async(user)=>{
-                try{
-                    let msg={body:message}
-                    if(user.lang!='ENGLISH')
-                    msg.body=hindimsg;
-                    msg.phone=user.number;
-                    let sent=await this.sendmsg(msg,false)
-                    if(!sent)
-                    console.log("Msg was not sent to : ",user.number)
-                    i+=1;
-                }catch(e){
-                    console.log(e)
-                }
-            })
-        )
+        let i=0,l=users.length,low=0,u=0;
+        while(true){
+            i=i+75
+            u=i<l?i:l;
+            subUsers=users.slice(low,u)
+            await Promise.all(
+                subUsers.map(async(user)=>{
+                    try{
+                        let msg={body:message}
+                        if(user.lang!='ENGLISH')
+                        msg.body=hindimsg;
+                        msg.phone=user.number;
+                        let sent=await this.sendmsg(msg,false)
+                        if(!sent)
+                        console.log("Msg was not sent to : ",user.number)
+                        i+=1;
+                    }catch(e){
+                        console.log(e)
+                    }
+                })
+            )
+            console.log("sent to batch :",low,u)
+            low=u
+            if(u==l || i>=l)
+            break;
+        }
         return true
     }
     catch(e){
