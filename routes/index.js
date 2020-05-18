@@ -552,9 +552,13 @@ router.post('/messages',async (req, res) => {
           }
         }
         else {
-          let states=await State.search(recvMsg);
-          let districts=await District.search(recvMsg);
-          let countries=await Country.search(recvMsg);
+          let py=await shell.exec('python3 -W ignore ./helpers/textMiner.py "'+recvMsg+'"')
+          let sea=recvMsg
+          if(!(py.stderr))
+              sea=String(py.stdout).split('\n').join(' ').split('\r').join(' ')
+          let states=await State.search(sea);
+          let districts=await District.search(sea);
+          let countries=await Country.search(sea);
           if(states.length!=0||districts.length!=0||countries.length!=0||recvMsg.toLocaleLowerCase().includes("news")||recvMsg.toLocaleLowerCase().includes("prediction")||recvMsg.toLocaleLowerCase().includes("yesterday")){
             replyMsg="Some Data based on our understanding of your msg....\n\n";
             if(recvMsg.toLocaleLowerCase().includes("yesterday")){
