@@ -14,8 +14,7 @@ if(len(arg)>1 and arg[1]=='download'):
     nltk.download('punkt')
     nltk.download('averaged_perceptron_tagger')
     nltk.download('stopwords')
-
-d = enchant.DictWithPWL("en_IN",os.path.abspath(os.path.dirname(__file__))+"\\names.txt")
+d = enchant.DictWithPWL("en_IN",os.path.join(os.path.abspath(os.path.dirname(__file__)),"names.txt"))
 
 def getWord(word):
     if is_number(word) or d.check(word.upper()):
@@ -24,7 +23,6 @@ def getWord(word):
     best_words =word
     best_ratio = 0
     suggestions=d.suggest(best_words)
-    return suggestions[len(suggestions)-1] if (len(suggestions)-1)>=0 else best_words
     for s in suggestions:
         tmp =difflib.SequenceMatcher(None, word, s).ratio()
         if tmp > best_ratio:
