@@ -81,7 +81,6 @@ exports.sendToAll=async (message)=>{
                         let sent=await this.sendmsg(msg,false)
                         if(!sent)
                         console.log("Msg was not sent to : ",user.number)
-                        i+=1;
                     }catch(e){
                         console.log(e)
                     }
