@@ -316,7 +316,7 @@ router.post('/messages',async (req, res) => {
             let updateUser=await User.setLastServedMenuName(user.number,"stateMenu");
           }
           else if(choice==1){
-            replyMsg = "Reply with Country Name. [If not getting it right, find country names here: https://pcms19.000webhostapp.com/, copy the one you wish to query and send it]: ";
+            replyMsg = "Reply with Country Name.";
              ChatApi.sendmsg({
               phone:user.number,
               body:replyMsg
