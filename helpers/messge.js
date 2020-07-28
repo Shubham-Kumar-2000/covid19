@@ -1,4 +1,4 @@
-let advices = [
+﻿let advices = [
     "This will pass too. Enjoy your time at home and spend quality time with your family! Things will be normal soon.",
     "Plan and calculate your essential needs for the next three weeks",
     "Our brothers from the North-East are just as Indian as you! Help everyone during this crisis ❤️",
@@ -96,6 +96,8 @@ exports.countryToMessage=(data)=>{
 }
 exports.stateDistricts=(districts)=>{
     if((!(districts instanceof Array))||districts.length==0)
+    return "";
+    if(districts.length>10)
     return "";
     let msg="The last reported case(s) were in ";
     if(districts.length==1)
